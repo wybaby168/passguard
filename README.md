@@ -75,6 +75,8 @@ import io.github.wybaby168.passguard.PassGuard;
 import io.github.wybaby168.passguard.PasswordAssessment;
 import io.github.wybaby168.passguard.PasswordContext;
 
+import java.util.Collections;
+
 PassGuard guard = PassGuard.builder()
     .contextWords("你的公司名", "你的产品名")
     .build();
@@ -84,7 +86,7 @@ PasswordAssessment result = guard.check(
     userHasMfa,
     new PasswordContext(
         username, email, displayName, "你的产品名",
-        java.util.Collections.<String>emptyList()
+        Collections.emptyList()
     )
 );
 
