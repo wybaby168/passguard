@@ -4,11 +4,40 @@ updates:
     directory: /frontend
     schedule:
       interval: monthly
+    groups:
+      npm-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    ignore:
+      - dependency-name: typescript
+        update-types:
+          - version-update:semver-major
   - package-ecosystem: maven
     directory: /java
     schedule:
       interval: monthly
+    groups:
+      maven-plugins:
+        patterns:
+          - "org.apache.maven.plugins:*"
+        update-types:
+          - minor
+          - patch
+    ignore:
+      - dependency-name: "org.junit.jupiter:junit-jupiter"
+        update-types:
+          - version-update:semver-major
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    groups:
+      actions-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
