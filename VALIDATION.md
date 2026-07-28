@@ -49,10 +49,16 @@
 
 ## 依赖更新稳定策略
 
-- Dependabot 将 npm、Maven 插件和 GitHub Actions 的 minor/patch 更新分别分组，减少相互冲突的 PR。
+- Dependabot 将 npm、Maven 和 GitHub Actions 的 minor/patch 更新分别分组，减少相互冲突的 PR。
 - JUnit 6 要求 Java 17，当前 Java 8 兼容线继续使用 JUnit 5，并忽略其 semver-major 自动更新。
 - TypeScript 7 是新的原生编译器主版本；当前发布线继续使用已验证的 TypeScript 5，并忽略其 semver-major 自动更新。
-- 全仓 SHA-256 清单仍作为人工审核门禁保留，不因 Bot PR 而跳过。
+- SHA-256 清单覆盖源码、测试、脚本、文档和密码数据。依赖管理器维护的
+  `package.json`、`package-lock.json`、`pom.xml` 以及 Actions 工作流不重复列入，
+  由 npm 锁文件完整性、Maven Central 校验和、版本固定和全矩阵 CI 负责验证。
+- CI 重新生成清单并要求结果零差异，可同时发现内容变化、遗漏文件和多余条目；
+  Dependabot 仅修改依赖元数据时不会再被无关的清单漂移阻塞。
+- JUnit 5.14.4 已在 Java 8/11/17/21/25 矩阵通过；TypeScript 5.9.3 已在
+  Node.js 20/22/24 矩阵通过。
 
 ## 性能基线
 
