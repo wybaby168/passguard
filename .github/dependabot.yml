@@ -20,9 +20,9 @@ updates:
     schedule:
       interval: monthly
     groups:
-      maven-plugins:
+      maven-minor-patch:
         patterns:
-          - "org.apache.maven.plugins:*"
+          - "*"
         update-types:
           - minor
           - patch

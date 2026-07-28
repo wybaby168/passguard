@@ -54,7 +54,8 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - run: shasum -a 256 -c checksums.sha256
+      - run: scripts/generate_checksums.sh
+      - run: git diff --exit-code -- checksums.sha256
       - run: python -m py_compile scripts/update_lists.py
       - run: bash -n scripts/download_hibp.sh
       - run: python scripts/update_lists.py --input-dir data/source --ref 2026.1
