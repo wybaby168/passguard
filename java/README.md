@@ -1,6 +1,6 @@
 # PassGuard Java
 
-Java 17+ 的弱密码防御库，内置 125,691 条高频名单、nbvcxz 强度估算、上下文变体和 HIBP k-anonymity 查询。
+Java 8+ 的弱密码防御库，内置 125,691 条高频名单、nbvcxz 强度估算、上下文变体和 HIBP k-anonymity 查询。
 
 ## 安装
 
@@ -8,9 +8,11 @@ Java 17+ 的弱密码防御库，内置 125,691 条高频名单、nbvcxz 强度�
 <dependency>
   <groupId>dev.flyfish</groupId>
   <artifactId>passguard</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
 </dependency>
 ```
+
+从 `1.0.2` 开始，主 JAR 以 Java 8 字节码（class major version 52）发布，并在真实 JDK 8 上完成编译、测试和独立启动验证；同一产物也持续在 Java 11、17、21 和 25 上测试。
 
 ## 最快接入
 
@@ -27,7 +29,8 @@ PasswordAssessment result = guard.check(
     rawPassword,
     userHasMfa,
     new PasswordContext(
-        username, email, displayName, "your-product", java.util.List.of()
+        username, email, displayName, "your-product",
+        java.util.Collections.<String>emptyList()
     )
 );
 
@@ -62,7 +65,7 @@ PassGuard guard = PassGuard.builder()
 
 ## HIBP 与线程
 
-默认客户端只发送 SHA-1 前 5 位，启用 `Add-Padding`，连接超时 3 秒、请求超时 5 秒。它使用同步 Java `HttpClient`；高并发服务应在受控 I/O 线程或虚拟线程中调用，并按业务需要增加前缀缓存、熔断和指标。
+默认客户端只发送 SHA-1 前 5 位，启用 `Add-Padding`，连接超时 3 秒、读取超时 5 秒。它使用 Java 8 自带的同步 `HttpURLConnection`；高并发服务应在受控 I/O 线程中调用，并按业务需要增加前缀缓存、熔断和指标。
 
 默认 `ALLOW_WITH_LOCAL_CHECKS` 会在 HIBP 不可用时依靠本地规则继续；高保证业务可改为 `REJECT`。
 

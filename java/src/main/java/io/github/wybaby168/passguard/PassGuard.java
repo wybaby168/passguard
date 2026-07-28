@@ -2,6 +2,7 @@ package io.github.wybaby168.passguard;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -76,13 +77,13 @@ public final class PassGuard {
 
         public Builder contextWords(String... words) {
             Objects.requireNonNull(words, "words");
-            return contextWords(List.of(words));
+            return contextWords(Arrays.asList(words));
         }
 
         public Builder contextWords(Collection<String> words) {
             Objects.requireNonNull(words, "words");
             for (String word : words) {
-                if (word != null && !word.isBlank()) contextWords.add(word);
+                if (!ContextPasswordChecker.isBlank(word)) contextWords.add(word);
             }
             return this;
         }

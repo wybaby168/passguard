@@ -33,7 +33,8 @@ class RegistrationService {
             false,
             new PasswordContext(
                 command.username(), command.email(), command.displayName(),
-                "your-product", List.of("your-company")
+                "your-product",
+                java.util.Collections.singletonList("your-company")
             )
         );
         if (!assessment.accepted()) {
@@ -45,4 +46,4 @@ class RegistrationService {
 }
 ```
 
-默认 HIBP 客户端使用同步 `HttpClient`。可放在 Java 21 虚拟线程或受控 I/O 线程池中，并配合 Resilience4j 等做缓存、超时、熔断和指标。指标只能记录状态与延迟，不能记录密码、完整哈希或响应内容。
+默认 HIBP 客户端使用 Java 8 自带的同步 `HttpURLConnection`。应放在受控 I/O 线程池中，并配合兼容当前 Java 版本的缓存、超时、熔断和指标组件。指标只能记录状态与延迟，不能记录密码、完整哈希或响应内容。
