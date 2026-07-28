@@ -3,6 +3,9 @@
 ```java
 import io.github.wybaby168.passguard.PassGuard;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 @Configuration
 class PasswordSecurityConfiguration {
     @Bean
@@ -17,6 +20,14 @@ class PasswordSecurityConfiguration {
 在领域服务而不是仅在 Controller/Bean Validation 中执行：
 
 ```java
+import io.github.wybaby168.passguard.PassGuard;
+import io.github.wybaby168.passguard.PasswordAssessment;
+import io.github.wybaby168.passguard.PasswordContext;
+
+import java.util.Collections;
+
+import org.springframework.stereotype.Service;
+
 @Service
 class RegistrationService {
     private final PassGuard passGuard;
@@ -34,7 +45,7 @@ class RegistrationService {
             new PasswordContext(
                 command.username(), command.email(), command.displayName(),
                 "your-product",
-                java.util.Collections.singletonList("your-company")
+                Collections.singletonList("your-company")
             )
         );
         if (!assessment.accepted()) {

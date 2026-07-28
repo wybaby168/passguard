@@ -21,6 +21,8 @@ import io.github.wybaby168.passguard.PassGuard;
 import io.github.wybaby168.passguard.PasswordAssessment;
 import io.github.wybaby168.passguard.PasswordContext;
 
+import java.util.Collections;
+
 PassGuard guard = PassGuard.builder()
     .contextWords("your-company", "your-product")
     .build();
@@ -30,7 +32,7 @@ PasswordAssessment result = guard.check(
     userHasMfa,
     new PasswordContext(
         username, email, displayName, "your-product",
-        java.util.Collections.<String>emptyList()
+        Collections.emptyList()
     )
 );
 
