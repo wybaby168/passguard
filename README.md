@@ -1,7 +1,7 @@
 # PassGuard
 
 [![CI](https://github.com/wybaby168/passguard/actions/workflows/ci.yml/badge.svg)](https://github.com/wybaby168/passguard/actions/workflows/ci.yml)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.wybaby168/passguard)](https://central.sonatype.com/artifact/io.github.wybaby168/passguard)
+[![Maven Central](https://img.shields.io/maven-central/v/dev.flyfish/passguard)](https://central.sonatype.com/artifact/dev.flyfish/passguard)
 [![npm](https://img.shields.io/npm/v/passguard-kit)](https://www.npmjs.com/package/passguard-kit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
@@ -64,9 +64,9 @@ const localGuard = createPassGuard({ pwnedChecker: false })
 
 ```xml
 <dependency>
-  <groupId>io.github.wybaby168</groupId>
+  <groupId>dev.flyfish</groupId>
   <artifactId>passguard</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 

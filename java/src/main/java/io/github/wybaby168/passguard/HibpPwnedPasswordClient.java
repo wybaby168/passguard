@@ -43,7 +43,7 @@ public final class HibpPwnedPasswordClient implements PwnedPasswordChecker {
                     .timeout(timeout)
                     .header("Accept", "text/plain")
                     .header("Add-Padding", "true")
-                    .header("User-Agent", "passguard-java/1.0.0")
+                    .header("User-Agent", "passguard-java/1.0.1")
                     .GET()
                     .build();
 

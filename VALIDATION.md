@@ -1,4 +1,4 @@
-# PassGuard 1.0.0 验证记录
+# PassGuard 1.0.1 验证记录
 
 验证日期：2026-07-28（Asia/Shanghai）。
 

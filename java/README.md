@@ -6,9 +6,9 @@ Java 17+ 的弱密码防御库，内置 125,691 条高频名单、nbvcxz 强度�
 
 ```xml
 <dependency>
-  <groupId>io.github.wybaby168</groupId>
+  <groupId>dev.flyfish</groupId>
   <artifactId>passguard</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
