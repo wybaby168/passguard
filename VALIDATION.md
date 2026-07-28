@@ -28,6 +28,8 @@
 ## Java / Maven
 
 - Java 8 目标编译通过，并使用真实 JDK 8 运行全部测试。
+- Maven Compiler 3.15.0、Surefire 3.5.6、JAR 3.5.1、Source 3.4.0
+  已在真实 JDK 8 上完成构建，并在 JDK 21 上完成发布产物验证。
 - 9 项 JUnit 测试全部通过，覆盖：
   - 完整内置名单加载；
   - Unicode、上下文、长度、强度和泄露策略；
@@ -44,6 +46,13 @@
 - 签名密钥指纹：`C4B132940C188FE1C013B3A3DF2CC947BCDF2931`。
 - JAR 包含 `META-INF/LICENSE`、`META-INF/NOTICE.md`、自动模块名和 125,691 条默认名单。
 - 从构建 JAR 独立启动 `io.github.wybaby168.passguard.Example` 通过。
+
+## 依赖更新稳定策略
+
+- Dependabot 将 npm、Maven 插件和 GitHub Actions 的 minor/patch 更新分别分组，减少相互冲突的 PR。
+- JUnit 6 要求 Java 17，当前 Java 8 兼容线继续使用 JUnit 5，并忽略其 semver-major 自动更新。
+- TypeScript 7 是新的原生编译器主版本；当前发布线继续使用已验证的 TypeScript 5，并忽略其 semver-major 自动更新。
+- 全仓 SHA-256 清单仍作为人工审核门禁保留，不因 Bot PR 而跳过。
 
 ## 性能基线
 
