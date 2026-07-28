@@ -1,0 +1,5 @@
+# One organization/product-related token per line. Do not add personal secrets.
+flyfish
+fileviewer
+examplecorp
+example-product

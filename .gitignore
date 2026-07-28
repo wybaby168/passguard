@@ -1,0 +1,14 @@
+.DS_Store
+.idea/
+.vscode/
+*.iml
+*.log
+
+frontend/node_modules/
+frontend/dist/
+frontend/*.tgz
+
+java/target/
+
+__pycache__/
+*.py[cod]

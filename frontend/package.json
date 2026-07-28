@@ -1,0 +1,64 @@
+{
+  "name": "passguard-kit",
+  "version": "1.0.0",
+  "description": "开箱即用的弱密码、本地黑名单、上下文、强度与 HIBP 泄露检测工具包",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "NOTICE.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
+    "embed:blocklist": "node scripts/embed-blocklist.mjs",
+    "prebuild": "npm run clean && npm run embed:blocklist",
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "check": "npm run test",
+    "benchmark": "npm run build && node benchmarks/local-performance.mjs",
+    "prepack": "npm run check"
+  },
+  "dependencies": {
+    "@zxcvbn-ts/core": "4.1.2",
+    "@zxcvbn-ts/language-common": "4.1.3",
+    "@zxcvbn-ts/language-en": "4.1.1"
+  },
+  "devDependencies": {
+    "typescript": "5.8.3"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "password",
+    "security",
+    "blocklist",
+    "hibp",
+    "zxcvbn",
+    "weak-password"
+  ],
+  "author": "wybaby168",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wybaby168/passguard.git",
+    "directory": "frontend"
+  },
+  "homepage": "https://github.com/wybaby168/passguard#readme",
+  "bugs": {
+    "url": "https://github.com/wybaby168/passguard/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "kitVersion": "1.0.0",
+  "generatedAtUtc": "2026-07-28T07:20:55+00:00",
+  "normalization": "Unicode NFC; exact whole-password matching; no trim",
+  "seclistsPinnedRelease": "2026.1",
+  "frontend": {
+    "entries": 25000,
+    "bytes": 200962,
+    "sha256": "8dbfc70da117822240bd7aa2fda53b69626117c45fcc713a1619e44e8639698a"
+  },
+  "backend": {
+    "entries": 125691,
+    "bytes": 1052920,
+    "sha256": "abe2bb87d1b20a1c877f36318684823761880fa2440cd10216a3044f869c1716",
+    "includesProbableWordlists": false
+  },
+  "optionalProbableWordlists": {
+    "entries": 12645,
+    "incrementalEntriesIfMerged": 121,
+    "includedInProductionUnion": false,
+    "license": "CC BY-SA 4.0; review NOTICE.md before redistribution",
+    "excludedByDefaultBecause": "archival age, separate CC BY-SA 4.0 terms, and negligible incremental coverage"
+  },
+  "sources": [
+    {
+      "name": "2025-199_most_used_passwords.txt",
+      "description": "SecLists 2026.1 / 2025 annual high-frequency password list",
+      "source": "https://raw.githubusercontent.com/danielmiessler/SecLists/2026.1/Passwords/Common-Credentials/2025-199_most_used_passwords.txt",
+      "lineCount": 199,
+      "uniqueNfcCount": 199,
+      "minimumExpectedLines": 199,
+      "sha256": "5bc5e9cb580bbc5c02999b8f96694f692fbc24c140f814c917069aabee174529",
+      "includedInProductionUnion": true
+    },
+    {
+      "name": "10k-most-common.txt",
+      "description": "SecLists 2026.1 / 10k common passwords",
+      "source": "https://raw.githubusercontent.com/danielmiessler/SecLists/2026.1/Passwords/Common-Credentials/10k-most-common.txt",
+      "lineCount": 10000,
+      "uniqueNfcCount": 10000,
+      "minimumExpectedLines": 10000,
+      "sha256": "4adb3f0afb4a10cf19ebe48d8c69a46f934bbc8d77c694c210564f9583e7f4ba",
+      "includedInProductionUnion": true
+    },
+    {
+      "name": "Pwdb_top-100000.txt",
+      "description": "SecLists 2026.1 / Pwdb top 100k",
+      "source": "https://raw.githubusercontent.com/danielmiessler/SecLists/2026.1/Passwords/Common-Credentials/Pwdb_top-100000.txt",
+      "lineCount": 100000,
+      "uniqueNfcCount": 100000,
+      "minimumExpectedLines": 100000,
+      "sha256": "07f876a616f08fb2cc5c3e0ce04e4a6d1123380580472b0997baebc4e8226977",
+      "includedInProductionUnion": true
+    },
+    {
+      "name": "100k-most-used-passwords-NCSC.txt",
+      "description": "SecLists 2026.1 / NCSC top 100k",
+      "source": "https://raw.githubusercontent.com/danielmiessler/SecLists/2026.1/Passwords/Common-Credentials/100k-most-used-passwords-NCSC.txt",
+      "lineCount": 99839,
+      "uniqueNfcCount": 99839,
+      "minimumExpectedLines": 99800,
+      "sha256": "c2e5696882c603b76bb67a47ee970897e5a76fc4c3f5547abe3d0ca340c576e0",
+      "includedInProductionUnion": true
+    },
+    {
+      "name": "probable-v2_top-12000.txt",
+      "description": "Probable Wordlists v2 snapshot; archival/secondary",
+      "source": "https://raw.githubusercontent.com/danielmiessler/SecLists/2026.1/Passwords/Common-Credentials/probable-v2_top-12000.txt",
+      "lineCount": 12645,
+      "uniqueNfcCount": 12645,
+      "minimumExpectedLines": 12000,
+      "sha256": "ea4c906ebb0b26790c549a047962573f72ccc26f42212b83d70165d9c03fb72b",
+      "includedInProductionUnion": false
+    }
+  ]
+}

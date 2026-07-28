@@ -1,0 +1,7 @@
+{
+  "2025-199_most_used_passwords.txt": "https://raw.githubusercontent.com/danielmiessler/SecLists/2026.1/Passwords/Common-Credentials/2025-199_most_used_passwords.txt",
+  "10k-most-common.txt": "https://raw.githubusercontent.com/danielmiessler/SecLists/2026.1/Passwords/Common-Credentials/10k-most-common.txt",
+  "Pwdb_top-100000.txt": "https://raw.githubusercontent.com/danielmiessler/SecLists/2026.1/Passwords/Common-Credentials/Pwdb_top-100000.txt",
+  "100k-most-used-passwords-NCSC.txt": "https://raw.githubusercontent.com/danielmiessler/SecLists/2026.1/Passwords/Common-Credentials/100k-most-used-passwords-NCSC.txt",
+  "probable-v2_top-12000.txt": "https://raw.githubusercontent.com/danielmiessler/SecLists/2026.1/Passwords/Common-Credentials/probable-v2_top-12000.txt"
+}
