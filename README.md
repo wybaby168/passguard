@@ -5,7 +5,7 @@
 [![npm](https://img.shields.io/npm/v/passguard-kit)](https://www.npmjs.com/package/passguard-kit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-PassGuard 是面向注册、改密和密码重置场景的弱密码防御库。它把本地高频弱密码名单、用户/企业上下文、可猜测性评分和 HIBP 泄露密码查询组合成一个易用 API，并同时提供 Java 17+ 与 TypeScript/JavaScript 版本。
+PassGuard 是面向注册、改密和密码重置场景的弱密码防御库。它把本地高频弱密码名单、用户/企业上下文、可猜测性评分和 HIBP 泄露密码查询组合成一个易用 API，并同时提供 Java 8+ 与 TypeScript/JavaScript 版本。
 
 > 这是防御工具，不是密码生成器，也不是密码存储库。校验通过后仍须使用 Argon2id、scrypt 或合规参数的 PBKDF2 保存密码。
 
@@ -66,7 +66,7 @@ const localGuard = createPassGuard({ pwnedChecker: false })
 <dependency>
   <groupId>dev.flyfish</groupId>
   <artifactId>passguard</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
 </dependency>
 ```
 
@@ -83,14 +83,13 @@ PasswordAssessment result = guard.check(
     password,
     userHasMfa,
     new PasswordContext(
-        username, email, displayName, "你的产品名", java.util.List.of()
+        username, email, displayName, "你的产品名",
+        java.util.Collections.<String>emptyList()
     )
 );
 
 if (!result.accepted()) {
-    throw new IllegalArgumentException(
-        result.firstViolation().orElseThrow().message()
-    );
+    throw new IllegalArgumentException(result.violations().get(0).message());
 }
 ```
 
@@ -102,6 +101,8 @@ PassGuard local = PassGuard.localOnly();    // 不访问外部网络
 ```
 
 `PassGuard` 实例无状态且可复用。Java 服务中应把它注册为单例 Bean，不能每个请求重复加载名单。
+
+Java 包从 `1.0.2` 开始以 Java 8 字节码（class major version 52）发布，并在真实 JDK 8 上执行完整测试；同一 JAR 可直接用于 Java 8、11、17、21、25。
 
 ## 判定结果
 
@@ -185,7 +186,7 @@ cd frontend
 npm ci
 npm test
 
-# Java：Java 17 编译 + 8 项测试
+# Java：Java 8 目标编译 + 9 项测试
 cd ../java
 mvn clean test
 
@@ -196,7 +197,7 @@ bash -n scripts/download_hibp.sh
 python3 scripts/update_lists.py --input-dir data/source --ref 2026.1
 ```
 
-CI 会覆盖多个 Node.js 与 Java LTS/当前版本。发布前还会验证 npm tarball、Maven sources/Javadoc/GPG 产物和独立消费者安装。
+CI 会在 Java 8、11、17、21、25 上运行完整测试，并覆盖多个 Node.js 版本。发布前还会验证 Java 8 字节码、npm tarball、Maven sources/Javadoc/GPG 产物和独立消费者安装。
 
 ## 数据来源与授权
 

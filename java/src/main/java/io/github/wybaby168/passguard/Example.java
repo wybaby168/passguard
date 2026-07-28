@@ -1,5 +1,7 @@
 package io.github.wybaby168.passguard;
 
+import java.util.Collections;
+
 public final class Example {
     private Example() {}
 
@@ -15,7 +17,7 @@ public final class Example {
                 "a-demo-password-that-must-be-replaced",
                 false,
                 new PasswordContext("demo-user", "demo@example.test", null,
-                        "example-product", java.util.List.of())
+                        "example-product", Collections.<String>emptyList())
         );
         System.out.println("accepted=" + result.accepted());
         System.out.println("violations=" + result.violations());

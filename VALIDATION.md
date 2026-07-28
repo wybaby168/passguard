@@ -1,4 +1,4 @@
-# PassGuard 1.0.1 验证记录
+# PassGuard 1.0.2 验证记录
 
 验证日期：2026-07-28（Asia/Shanghai）。
 
@@ -27,12 +27,13 @@
 
 ## Java / Maven
 
-- Java 17 目标编译通过。
-- 8 项 JUnit 测试全部通过，覆盖：
+- Java 8 目标编译通过，并使用真实 JDK 8 运行全部测试。
+- 9 项 JUnit 测试全部通过，覆盖：
   - 完整内置名单加载；
   - Unicode、上下文、长度、强度和泄露策略；
   - 本地 HTTP 服务器验证 HIBP k-anonymity 请求；
   - `PassGuard` 高级 API；
+  - Java 8 值对象不可变性与超时参数；
   - 50,000 次本地策略性能预算。
 - `mvn -Prelease,ossrh clean verify` 成功生成：
   - 主 JAR；

@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>dev.flyfish</groupId>
   <artifactId>passguard</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
 
   <name>PassGuard</name>
   <description>开箱即用的 Java 弱密码、本地黑名单、上下文、强度与 HIBP 泄露检测工具包</description>
@@ -30,11 +30,11 @@
     <connection>scm:git:https://github.com/wybaby168/passguard.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/wybaby168/passguard.git</developerConnection>
     <url>https://github.com/wybaby168/passguard</url>
-    <tag>v1.0.1</tag>
+    <tag>v1.0.2</tag>
   </scm>
 
   <properties>
-    <maven.compiler.release>17</maven.compiler.release>
+    <maven.compiler.release>8</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.outputTimestamp>2026-07-28T08:00:00Z</project.build.outputTimestamp>

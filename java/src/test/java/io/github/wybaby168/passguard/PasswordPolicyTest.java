@@ -5,9 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import java.net.InetSocketAddress;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -18,7 +20,8 @@ class PasswordPolicyTest {
 
     @Test
     void preservesSpacesAndNfc() {
-        LocalBlocklist list = new LocalBlocklist(List.of(" password", "éxample"));
+        LocalBlocklist list = new LocalBlocklist(
+                Arrays.asList(" password", "éxample"));
         assertTrue(list.contains(" password"));
         assertFalse(list.contains("password"));
         assertTrue(list.contains("éxample"));
@@ -28,8 +31,10 @@ class PasswordPolicyTest {
     void rejectsCommonAndContextPasswords() {
         PasswordPolicy policy = new PasswordPolicy(
                 PasswordPolicyConfig.secureDefaults(),
-                new LocalBlocklist(List.of("correct horse battery staple")),
-                new ContextPasswordChecker(List.of("flyfish")),
+                new LocalBlocklist(
+                        Collections.singletonList("correct horse battery staple")),
+                new ContextPasswordChecker(
+                        Collections.singletonList("flyfish")),
                 STRONG,
                 password -> PwnedCheckResult.clear()
         );
@@ -48,8 +53,8 @@ class PasswordPolicyTest {
     void rejectsPwnedAfterLocalChecksPass() {
         PasswordPolicy policy = new PasswordPolicy(
                 PasswordPolicyConfig.secureDefaults(),
-                new LocalBlocklist(List.of()),
-                new ContextPasswordChecker(List.of()),
+                new LocalBlocklist(Collections.<String>emptyList()),
+                new ContextPasswordChecker(Collections.<String>emptyList()),
                 STRONG,
                 password -> PwnedCheckResult.pwned(42)
         );
@@ -72,7 +77,8 @@ class PasswordPolicyTest {
         PasswordAssessment common = guard.check("123456", true);
         assertFalse(common.accepted());
         assertEquals(PasswordViolationCode.TOO_SHORT,
-                common.firstViolation().orElseThrow().code());
+                common.firstViolation().orElseThrow(
+                        () -> new AssertionError("missing violation")).code());
         assertTrue(common.violations().stream()
                 .anyMatch(v -> v.code() == PasswordViolationCode.COMMON_PASSWORD));
 
@@ -86,7 +92,7 @@ class PasswordPolicyTest {
         PasswordPolicyConfig strict = new PasswordPolicyConfig(
                 15, 8, 128, 3, 1, HibpFailureMode.REJECT, true);
         PassGuard guard = PassGuard.builder()
-                .blocklist(new LocalBlocklist(List.of()))
+                .blocklist(new LocalBlocklist(Collections.<String>emptyList()))
                 .strengthEstimator(STRONG)
                 .pwnedChecker(password -> PwnedCheckResult.unavailable("test"))
                 .config(strict)
@@ -118,7 +124,7 @@ class PasswordPolicyTest {
             URI endpoint = URI.create(
                     "http://127.0.0.1:" + server.getAddress().getPort() + "/range/");
             HibpPwnedPasswordClient client = new HibpPwnedPasswordClient(
-                    HttpClient.newHttpClient(), endpoint, Duration.ofSeconds(2));
+                    endpoint, Duration.ofSeconds(2));
             PwnedCheckResult result = client.check("password");
             assertEquals(PwnedStatus.PWNED, result.status());
             assertEquals(42L, result.count());
@@ -143,5 +149,35 @@ class PasswordPolicyTest {
                 () -> new PasswordPolicyConfig(
                         15, 8, 128, 5, 1,
                         HibpFailureMode.ALLOW_WITH_LOCAL_CHECKS, true));
+        assertThrows(IllegalArgumentException.class,
+                () -> new HibpPwnedPasswordClient(
+                        URI.create("https://example.test/range/"), Duration.ZERO));
+    }
+
+    @Test
+    void keepsJava8ValueObjectsImmutable() {
+        List<String> words = new ArrayList<String>();
+        words.add("example");
+        PasswordContext context =
+                new PasswordContext("user", null, null, null, words);
+        words.add("mutated");
+
+        assertEquals(Collections.singletonList("example"),
+                context.organizationWords());
+        assertThrows(UnsupportedOperationException.class,
+                () -> context.organizationWords().add("blocked"));
+        assertEquals(context, new PasswordContext(
+                "user", null, null, null,
+                Collections.singletonList("example")));
+
+        List<PasswordViolation> violations = new ArrayList<PasswordViolation>();
+        violations.add(new PasswordViolation(
+                PasswordViolationCode.TOO_SHORT, "too short"));
+        PasswordAssessment assessment = new PasswordAssessment(
+                false, 1, null, PwnedStatus.SKIPPED, null, violations);
+        violations.clear();
+        assertEquals(1, assessment.violations().size());
+        assertThrows(UnsupportedOperationException.class,
+                () -> assessment.violations().clear());
     }
 }

@@ -3,7 +3,9 @@ package io.github.wybaby168.passguard;
 import java.time.Year;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,10 +13,10 @@ import java.util.regex.Pattern;
 
 public final class ContextPasswordChecker {
     private static final Pattern SPLIT = Pattern.compile("[^\\p{L}\\p{N}]+");
-    private static final List<String> SUFFIXES = List.of(
+    private static final List<String> SUFFIXES = Collections.unmodifiableList(Arrays.asList(
             "", "1", "01", "12", "123", "1234", "12345", "123456",
             "!", "!1", "!123", "@123", "#123", "_123", "-123"
-    );
+    ));
 
     private final Set<String> globalCandidates;
 
@@ -22,13 +24,14 @@ public final class ContextPasswordChecker {
         Set<String> candidates = new HashSet<>();
         if (globalWords != null) {
             for (String value : globalWords) {
-                if (value == null || value.isBlank()) continue;
+                if (isBlank(value)) continue;
                 for (String token : extractTokens(value)) addVariants(candidates, token);
             }
         }
         // Product and organization words are shared by all users. Precompute
         // their variants once instead of rebuilding them on every request.
-        this.globalCandidates = Set.copyOf(candidates);
+        this.globalCandidates = Collections.unmodifiableSet(
+                new HashSet<String>(candidates));
     }
 
     public boolean isBlocked(String password, PasswordContext context) {
@@ -60,7 +63,17 @@ public final class ContextPasswordChecker {
     }
 
     private static void addIfPresent(List<String> target, String value) {
-        if (value != null && !value.isBlank()) target.add(value);
+        if (!isBlank(value)) target.add(value);
+    }
+
+    static boolean isBlank(String value) {
+        if (value == null || value.isEmpty()) return true;
+        for (int offset = 0; offset < value.length();) {
+            int codePoint = value.codePointAt(offset);
+            if (!Character.isWhitespace(codePoint)) return false;
+            offset += Character.charCount(codePoint);
+        }
+        return true;
     }
 
     private static Set<String> extractTokens(String raw) {

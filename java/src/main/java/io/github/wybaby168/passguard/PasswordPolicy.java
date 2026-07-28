@@ -1,6 +1,7 @@
 package io.github.wybaby168.passguard;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,7 +21,9 @@ public final class PasswordPolicy {
     ) {
         this.config = Objects.requireNonNull(config, "config");
         this.blocklist = Objects.requireNonNull(blocklist, "blocklist");
-        this.contextChecker = contextChecker == null ? new ContextPasswordChecker(List.of()) : contextChecker;
+        this.contextChecker = contextChecker == null
+                ? new ContextPasswordChecker(Collections.<String>emptyList())
+                : contextChecker;
         this.strengthEstimator = strengthEstimator;
         this.pwnedChecker = pwnedChecker;
     }

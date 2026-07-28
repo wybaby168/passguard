@@ -1,17 +1,19 @@
 package io.github.wybaby168.passguard;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Year;
 import java.time.ZoneOffset;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
 
 public final class CoreSelfTest {
     private static final int EXPECTED_BACKEND_ENTRIES = 125_691;
 
     public static void main(String[] args) throws Exception {
         Path fullListPath = args.length > 0
-                ? Path.of(args[0])
-                : Path.of("src/main/resources/weak-passwords/backend-blocklist.txt");
+                ? Paths.get(args[0])
+                : Paths.get("src/main/resources/weak-passwords/backend-blocklist.txt");
         LocalBlocklist fullList = LocalBlocklist.fromPath(fullListPath);
         check(fullList.size() == EXPECTED_BACKEND_ENTRIES,
                 "unexpected backend blocklist size: " + fullList.size());
@@ -19,14 +21,16 @@ public final class CoreSelfTest {
         expectIllegalArgument(() -> new PasswordPolicyConfig(
                 15, 8, 63, 3, 1, HibpFailureMode.ALLOW_WITH_LOCAL_CHECKS, true));
 
-        LocalBlocklist list = new LocalBlocklist(List.of(" password", "éxample", "123456"));
+        LocalBlocklist list = new LocalBlocklist(
+                Arrays.asList(" password", "éxample", "123456"));
         check(list.contains(" password"), "leading space must be preserved");
         check(!list.contains("password"), "passwords must not be trimmed");
         check(list.contains("éxample"), "NFC exact match failed");
 
         PasswordPolicy commonPolicy = new PasswordPolicy(
                 PasswordPolicyConfig.secureDefaults(), list,
-                new ContextPasswordChecker(List.of("flyfish")),
+                new ContextPasswordChecker(
+                        Collections.singletonList("flyfish")),
                 password -> 4,
                 password -> PwnedCheckResult.clear());
         PasswordAssessment common = commonPolicy.assess("123456", true, PasswordContext.empty());
@@ -39,8 +43,10 @@ public final class CoreSelfTest {
                 "context password was not rejected");
 
         PasswordPolicy pwnedPolicy = new PasswordPolicy(
-                PasswordPolicyConfig.secureDefaults(), new LocalBlocklist(List.of()),
-                new ContextPasswordChecker(List.of()), password -> 4,
+                PasswordPolicyConfig.secureDefaults(),
+                new LocalBlocklist(Collections.<String>emptyList()),
+                new ContextPasswordChecker(Collections.<String>emptyList()),
+                password -> 4,
                 password -> PwnedCheckResult.pwned(99));
         PasswordAssessment pwned = pwnedPolicy.assess(
                 "a genuinely long candidate 2026!", false, PasswordContext.empty());

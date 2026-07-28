@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -23,14 +24,15 @@ public final class LocalBlocklist {
                 normalized.add(PasswordNormalizer.normalizePassword(entry));
             }
         }
-        this.entries = Set.copyOf(normalized);
+        this.entries = Collections.unmodifiableSet(
+                new HashSet<String>(normalized));
     }
 
     public static LocalBlocklist fromClasspath(String resource) throws IOException {
         InputStream stream = LocalBlocklist.class.getResourceAsStream(resource);
         if (stream == null) throw new IOException("Classpath resource not found: " + resource);
-        try (stream) {
-            return fromInputStream(stream);
+        try (InputStream input = stream) {
+            return fromInputStream(input);
         }
     }
 
