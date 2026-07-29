@@ -15,17 +15,31 @@ async function sha1UpperHex(value: string): Promise<string> {
   return bytesToUpperHex(await globalThis.crypto.subtle.digest('SHA-1', bytes))
 }
 
+/** HIBP Pwned Passwords range API 客户端选项。 */
 export interface HibpClientOptions {
+  /** range API 基础地址。 */
   readonly endpoint?: string
+  /** 正的有限超时毫秒数，默认 5000。 */
   readonly timeoutMs?: number
+  /** 自定义 fetch、代理或测试替身。 */
   readonly fetchImpl?: typeof fetch
 }
 
+/**
+ * HIBP Pwned Passwords k-anonymity 客户端。
+ *
+ * 仅发送 NFC 后密码 SHA-1 的前 5 个十六进制字符，并在本地比较后缀。
+ * SHA-1 不能用于密码存储。
+ */
 export class HibpPwnedPasswordClient implements PwnedPasswordChecker {
   readonly #endpoint: string
   readonly #timeoutMs: number
   readonly #fetch: typeof fetch
 
+  /**
+   * @param options 端点、超时和 fetch 实现
+   * @throws timeoutMs 不是正有限数时抛出 Error
+   */
   constructor(options: HibpClientOptions = {}) {
     this.#endpoint = options.endpoint ?? 'https://api.pwnedpasswords.com/range/'
     this.#timeoutMs = options.timeoutMs ?? 5_000
@@ -35,6 +49,13 @@ export class HibpPwnedPasswordClient implements PwnedPasswordChecker {
     this.#fetch = options.fetchImpl ?? globalThis.fetch.bind(globalThis)
   }
 
+  /**
+   * 查询泄露状态。超时、取消、Web Crypto、网络、HTTP 和解析问题会返回
+   * unavailable，而不是拒绝 Promise。
+   *
+   * @param password 待检查密码
+   * @param signal 可选调用方取消信号
+   */
   async check(password: string, signal?: AbortSignal): Promise<PwnedCheckResult> {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(new Error('HIBP request timeout')), this.#timeoutMs)

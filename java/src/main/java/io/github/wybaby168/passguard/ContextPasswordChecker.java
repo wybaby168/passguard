@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+/**
+ * 识别用户名、邮箱、显示名、产品名和组织词的常见整串变体。
+ */
 public final class ContextPasswordChecker {
     private static final Pattern SPLIT = Pattern.compile("[^\\p{L}\\p{N}]+");
     private static final List<String> SUFFIXES = Collections.unmodifiableList(Arrays.asList(
@@ -20,6 +23,11 @@ public final class ContextPasswordChecker {
 
     private final Set<String> globalCandidates;
 
+    /**
+     * 创建检查器并预计算所有用户共享的上下文词。
+     *
+     * @param globalWords 产品名、企业名等全局词；可为 {@code null}
+     */
     public ContextPasswordChecker(Collection<String> globalWords) {
         Set<String> candidates = new HashSet<>();
         if (globalWords != null) {
@@ -34,6 +42,13 @@ public final class ContextPasswordChecker {
                 new HashSet<String>(candidates));
     }
 
+    /**
+     * 判断密码是否等于全局或当前用户上下文的常见变体。
+     *
+     * @param password 待检查密码
+     * @param context 当前上下文；{@code null} 按空上下文处理
+     * @return 是否应按上下文密码拒绝
+     */
     public boolean isBlocked(String password, PasswordContext context) {
         String key = PasswordNormalizer.contextKey(password);
         if (key.isEmpty()) return false;

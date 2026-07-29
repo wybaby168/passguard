@@ -41,15 +41,26 @@ function candidatesFrom(values: Iterable<string | undefined>): Set<string> {
   return candidates
 }
 
+/**
+ * 识别用户名、邮箱、显示名、产品名和组织词的常见整串变体。
+ */
 export class ContextPasswordChecker {
   readonly #globalCandidates: ReadonlySet<string>
 
+  /**
+   * @param globalWords 产品名、企业名等所有用户共享的上下文词
+   */
   constructor(globalWords: readonly string[] = []) {
     // Global product/organization variants never change, so compute them only
     // once instead of rebuilding the same Set for every password assessment.
     this.#globalCandidates = candidatesFrom(globalWords)
   }
 
+  /**
+   * @param password 待检查密码
+   * @param context 当前用户与业务上下文
+   * @returns 是否应按上下文密码拒绝
+   */
   isBlocked(password: string, context: PasswordContext = {}): boolean {
     const key = contextComparisonKey(password)
     if (key.length === 0) return false

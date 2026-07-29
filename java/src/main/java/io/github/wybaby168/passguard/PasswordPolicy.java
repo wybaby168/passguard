@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * 底层密码策略编排器。通常应优先使用 {@link PassGuard}。
+ */
 public final class PasswordPolicy {
     private final PasswordPolicyConfig config;
     private final LocalBlocklist blocklist;
@@ -12,6 +15,15 @@ public final class PasswordPolicy {
     private final StrengthEstimator strengthEstimator;
     private final PwnedPasswordChecker pwnedChecker;
 
+    /**
+     * 创建策略。
+     *
+     * @param config 策略配置
+     * @param blocklist 本地名单
+     * @param contextChecker 上下文检查器；{@code null} 表示空全局上下文
+     * @param strengthEstimator 强度估算器；{@code null} 表示关闭
+     * @param pwnedChecker 泄露密码检查器；{@code null} 表示关闭
+     */
     public PasswordPolicy(
             PasswordPolicyConfig config,
             LocalBlocklist blocklist,
@@ -28,6 +40,14 @@ public final class PasswordPolicy {
         this.pwnedChecker = pwnedChecker;
     }
 
+    /**
+     * 按长度、名单、上下文、强度和泄露状态依次评估密码。
+     *
+     * @param password 原始密码，不能为 {@code null}
+     * @param mfaProtected 是否使用 MFA 场景最小长度
+     * @param context 当前上下文；{@code null} 按空上下文处理
+     * @return 不可变评估结果
+     */
     public PasswordAssessment assess(String password, boolean mfaProtected, PasswordContext context) {
         Objects.requireNonNull(password, "password");
         String normalized = PasswordNormalizer.normalizePassword(password);

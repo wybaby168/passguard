@@ -5,6 +5,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * 用户、服务与组织相关的密码上下文。
+ *
+ * <p>上下文只用于生成整串候选值，不会执行子串拒绝。</p>
+ */
 public final class PasswordContext {
     private final String username;
     private final String email;
@@ -12,6 +17,15 @@ public final class PasswordContext {
     private final String serviceName;
     private final List<String> organizationWords;
 
+    /**
+     * 创建不可变上下文。
+     *
+     * @param username 用户名，可为 {@code null}
+     * @param email 邮箱，可为 {@code null}
+     * @param displayName 显示名，可为 {@code null}
+     * @param serviceName 服务或产品名，可为 {@code null}
+     * @param organizationWords 组织相关词；{@code null} 按空列表处理
+     */
     public PasswordContext(
             String username,
             String email,
@@ -35,26 +49,32 @@ public final class PasswordContext {
         }
     }
 
+    /** @return 用户名，可为 {@code null} */
     public String username() {
         return username;
     }
 
+    /** @return 邮箱，可为 {@code null} */
     public String email() {
         return email;
     }
 
+    /** @return 显示名，可为 {@code null} */
     public String displayName() {
         return displayName;
     }
 
+    /** @return 服务或产品名，可为 {@code null} */
     public String serviceName() {
         return serviceName;
     }
 
+    /** @return 组织相关词的不可变副本 */
     public List<String> organizationWords() {
         return organizationWords;
     }
 
+    /** @return 不含任何上下文值的实例 */
     public static PasswordContext empty() {
         return new PasswordContext(null, null, null, null,
                 Collections.<String>emptyList());

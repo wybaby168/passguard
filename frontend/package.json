@@ -1,6 +1,6 @@
 {
   "name": "passguard-kit",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "开箱即用的弱密码、本地黑名单、上下文、强度与 HIBP 泄露检测工具包",
   "type": "module",
   "main": "./dist/index.js",
@@ -13,6 +13,7 @@
   },
   "files": [
     "dist",
+    "API.md",
     "README.md",
     "LICENSE",
     "NOTICE.md"

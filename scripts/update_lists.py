@@ -56,7 +56,7 @@ EXTRA_FILES = [
         "minimum": 1,
     },
 ]
-USER_AGENT = "passguard-list-updater/1.0.2"
+USER_AGENT = "passguard-list-updater/1.0.3"
 
 
 def parse_args() -> argparse.Namespace:
@@ -263,7 +263,7 @@ def main() -> int:
     shutil.copyfile(backend_path, java_resources / backend_path.name)
 
     metadata = {
-        "kitVersion": "1.0.2",
+        "kitVersion": "1.0.3",
         "generatedAtUtc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "normalization": "Unicode NFC; exact whole-password matching; no trim",
         "seclistsPinnedRelease": resolved_ref,

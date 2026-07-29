@@ -1,6 +1,6 @@
-# PassGuard 1.0.2 验证记录
+# PassGuard 1.0.3 验证记录
 
-验证日期：2026-07-28（Asia/Shanghai）。
+验证日期：2026-07-29（Asia/Shanghai）。
 
 ## 源包与数据
 
@@ -10,10 +10,12 @@
 - 默认 Java 名单：125,691 条；与发布资源逐字节一致。
 - 启用可选 Probable Wordlists 后：125,812 条，增量 121 条。
 - `scripts/update_lists.py` 通过 Python 语法检查。
+- `scripts/verify_api_docs.py` 验证 Java 与 TypeScript 公开符号均出现在对应 API 参考中。
 - `scripts/download_hibp.sh` 通过 Bash 语法检查。
 
 ## JavaScript / TypeScript
 
+- 完整 API 参考覆盖 27 个公开导出；TypeScript 声明保留 TSDoc，`API.md` 随 npm 包发布。
 - TypeScript strict 编译通过。
 - 10 项 Node.js 测试全部通过，覆盖：
   - NFC 与不 `trim()`；
@@ -22,11 +24,13 @@
   - 配置不变量；
   - 一行创建的 `createPassGuard()` 高级 API。
 - `npm audit --omit=dev --registry=https://registry.npmjs.org`：0 漏洞。
-- `npm pack` 产物：34 个文件，约 122.2 KiB 压缩、268.7 KiB 解压。
+- `npm pack` 产物：35 个文件，约 129.4 KiB 压缩、290.2 KiB 解压。
 - 在全新临时项目中从 tarball 安装，ESM 导入和实际弱密码拦截通过。
 
 ## Java / Maven
 
+- 完整 API 参考覆盖 68 个公开类型、常量与业务方法；公开 API 均提供 Javadoc，
+  Javadoc JAR 可由 Maven Central 和 javadoc.io 直接访问。
 - Java 8 目标编译通过，并使用真实 JDK 8 运行全部测试。
 - Maven Compiler 3.15.0、Surefire 3.5.6、JAR 3.5.1、Source 3.4.0
   已在真实 JDK 8 上完成构建，并在 JDK 21 上完成发布产物验证。

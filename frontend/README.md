@@ -2,6 +2,9 @@
 
 PassGuard 的 TypeScript/JavaScript 包，面向现代浏览器与 Node.js 20+。内置 25,000 条高频弱密码名单、zxcvbn-ts 强度估算、上下文变体和 HIBP k-anonymity 查询。
 
+- [完整 JavaScript / TypeScript API 参考](API.md)
+- npm 包包含 TypeScript 声明，IDE 可直接显示参数和 TSDoc
+
 ## 安装
 
 ```bash
@@ -52,6 +55,9 @@ const policy = new PasswordPolicy({
 ```
 
 `PasswordBlocklist.fromUrl()` 可加载自定义名单。读取时仅移除换行符，不会 `trim()` 密码。
+
+所有导出函数、类、接口、配置默认值、返回字段、违规码、取消和失败语义见
+[完整 API 参考](API.md)。
 
 ## 浏览器部署
 

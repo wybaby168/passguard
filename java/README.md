@@ -2,13 +2,17 @@
 
 Java 8+ 的弱密码防御库，内置 125,691 条高频名单、nbvcxz 强度估算、上下文变体和 HIBP k-anonymity 查询。
 
+- [完整 Java API 参考](API.md)
+- [在线 Javadoc](https://javadoc.io/doc/dev.flyfish/passguard/latest/index.html)
+- [Spring Boot 接入示例](SPRING_BOOT_EXAMPLE.md)
+
 ## 安装
 
 ```xml
 <dependency>
   <groupId>dev.flyfish</groupId>
   <artifactId>passguard</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
 </dependency>
 ```
 
@@ -64,6 +68,9 @@ PassGuard guard = PassGuard.builder()
 ```
 
 底层的 `PasswordPolicy`、`LocalBlocklist`、`ContextPasswordChecker`、`StrengthEstimator` 和 `PwnedPasswordChecker` 都是公开 API，可替换名单、缓存或远程客户端。
+
+所有公开类、方法、默认值、参数约束、返回字段、枚举和失败语义见
+[完整 Java API 参考](API.md)。Maven Central 同步发布 sources 和 Javadoc JAR。
 
 ## HIBP 与线程
 
