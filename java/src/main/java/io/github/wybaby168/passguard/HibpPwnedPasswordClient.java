@@ -12,6 +12,14 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.Objects;
 
+/**
+ * HIBP Pwned Passwords range API 客户端。
+ *
+ * <p>客户端对 NFC 后密码计算 SHA-1，只发送前 5 个十六进制字符，并在本地
+ * 比较返回后缀。SHA-1 仅用于 HIBP 索引兼容，不能用于密码存储。</p>
+ *
+ * <p>该 Java 8 实现使用同步 {@link HttpURLConnection}。</p>
+ */
 public final class HibpPwnedPasswordClient implements PwnedPasswordChecker {
     private static final URI DEFAULT_ENDPOINT = URI.create("https://api.pwnedpasswords.com/range/");
     private static final char[] UPPER_HEX = "0123456789ABCDEF".toCharArray();
@@ -20,14 +28,30 @@ public final class HibpPwnedPasswordClient implements PwnedPasswordChecker {
     private final int connectTimeoutMillis;
     private final int readTimeoutMillis;
 
+    /**
+     * 使用官方端点、3 秒连接超时和 5 秒读取超时。
+     */
     public HibpPwnedPasswordClient() {
         this(DEFAULT_ENDPOINT, Duration.ofSeconds(3), Duration.ofSeconds(5));
     }
 
+    /**
+     * 为连接和读取使用相同超时。
+     *
+     * @param endpoint range API 基础地址
+     * @param timeout 正的连接与读取超时
+     */
     public HibpPwnedPasswordClient(URI endpoint, Duration timeout) {
         this(endpoint, timeout, timeout);
     }
 
+    /**
+     * 使用自定义端点及独立超时。
+     *
+     * @param endpoint range API 基础地址
+     * @param connectTimeout 正的连接超时
+     * @param readTimeout 正的读取超时
+     */
     public HibpPwnedPasswordClient(
             URI endpoint,
             Duration connectTimeout,
@@ -38,6 +62,13 @@ public final class HibpPwnedPasswordClient implements PwnedPasswordChecker {
         this.readTimeoutMillis = timeoutMillis(readTimeout, "readTimeout");
     }
 
+    /**
+     * 查询泄露状态。网络、非 200 HTTP 和解析异常会转换为
+     * {@link PwnedStatus#UNAVAILABLE}。
+     *
+     * @param password 待检查密码
+     * @return clear、pwned 或 unavailable 结果
+     */
     @Override
     public PwnedCheckResult check(String password) {
         HttpURLConnection connection = null;
@@ -54,7 +85,7 @@ public final class HibpPwnedPasswordClient implements PwnedPasswordChecker {
             connection.setUseCaches(false);
             connection.setRequestProperty("Accept", "text/plain");
             connection.setRequestProperty("Add-Padding", "true");
-            connection.setRequestProperty("User-Agent", "passguard-java/1.0.2");
+            connection.setRequestProperty("User-Agent", "passguard-java/1.0.3");
 
             int statusCode = connection.getResponseCode();
             if (statusCode != HttpURLConnection.HTTP_OK) {

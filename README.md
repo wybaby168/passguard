@@ -20,6 +20,20 @@ PassGuard 是面向注册、改密和密码重置场景的弱密码防御库。�
 - **可控故障策略**：HIBP 不可用时可选择继续本地判断或拒绝请求。
 - **服务端/前端一致**：两端使用相同的判定模型；最终裁决必须在服务端重复执行。
 
+## API 文档与选型
+
+| 开发场景 | Java | JavaScript / TypeScript |
+|---|---|---|
+| 完整默认能力 | `PassGuard.create()` | `createPassGuard()` |
+| 无网络本地预检 | `PassGuard.localOnly()` | `createPassGuard({ pwnedChecker: false })` |
+| 修改阈值或替换组件 | `PassGuard.builder()` | `new PassGuard(options)` |
+| 完全控制底层组合 | `new PasswordPolicy(...)` | `new PasswordPolicy(dependencies)` |
+
+- [Java 完整 API 参考](java/API.md)：所有公开类、构建器、配置、结果、扩展接口和异常语义。
+- [JavaScript / TypeScript 完整 API 参考](frontend/API.md)：所有导出函数、类、接口、选项、取消与运行环境。
+- [在线 Java Javadoc](https://javadoc.io/doc/dev.flyfish/passguard/latest/index.html)。
+- npm 包内同时发布 TypeScript 声明和 `API.md`，IDE 可直接显示 TSDoc。
+
 ## 30 秒接入
 
 ### JavaScript / TypeScript
@@ -66,7 +80,7 @@ const localGuard = createPassGuard({ pwnedChecker: false })
 <dependency>
   <groupId>dev.flyfish</groupId>
   <artifactId>passguard</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
 </dependency>
 ```
 
@@ -178,7 +192,8 @@ cd ../java && mvn test
 - SHA-1 仅用于 HIBP 索引格式，绝不能用于密码存储。
 - 本地名单、上下文词均做整串匹配；不要因为密码包含一个短词就拒绝。
 
-详见 [SECURITY.md](SECURITY.md)、[Java 接入说明](java/README.md) 与 [npm 接入说明](frontend/README.md)。
+详见 [SECURITY.md](SECURITY.md)、[Java API](java/API.md) 与
+[JavaScript / TypeScript API](frontend/API.md)。
 
 ## 开发与验证
 

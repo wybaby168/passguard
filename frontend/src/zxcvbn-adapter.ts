@@ -12,7 +12,14 @@ const factory = new ZxcvbnFactory({
   },
 })
 
+/**
+ * 使用 zxcvbn-ts 通用及英文词典的默认强度估算器。
+ */
 export class ZxcvbnTsStrengthEstimator implements StrengthEstimator {
+  /**
+   * @param password 已完成 NFC 规范化的密码
+   * @param userInputs 用户名、邮箱、产品名等上下文输入
+   */
   estimate(password: string, userInputs: readonly string[] = []): StrengthResult {
     const result = factory.check(password, [...userInputs])
     return {

@@ -57,6 +57,7 @@ jobs:
       - run: scripts/generate_checksums.sh
       - run: git diff --exit-code -- checksums.sha256
       - run: python -m py_compile scripts/update_lists.py
+      - run: python scripts/verify_api_docs.py
       - run: bash -n scripts/download_hibp.sh
       - run: python scripts/update_lists.py --input-dir data/source --ref 2026.1
       - run: cmp data/generated/frontend-blocklist.txt frontend/public/passwords/frontend-blocklist.txt

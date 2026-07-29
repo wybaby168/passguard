@@ -9,32 +9,52 @@ import type {
   StrengthEstimator,
 } from './types.js'
 
+/** HIBP 不可用时继续依赖本地规则，或直接拒绝。 */
 export type HibpFailureMode = 'ALLOW_WITH_LOCAL_CHECKS' | 'REJECT'
 
+/** 完整密码策略配置。 */
 export interface PasswordPolicyConfig {
+  /** 单因素场景最小长度，至少为 1。 */
   readonly minLengthSingleFactor: number
+  /** MFA 场景最小长度，至少为 1。 */
   readonly minLengthWithMfa: number
+  /** 最大长度，至少为 64 且不小于两个最小长度。 */
   readonly maxLength: number
+  /** 最小强度分，范围 0 到 4。 */
   readonly minimumStrengthScore: number
+  /** 泄露出现次数拒绝阈值，至少为 1。 */
   readonly rejectPwnedCountAtLeast: number
+  /** 泄露源不可用时的处理方式。 */
   readonly hibpFailureMode: HibpFailureMode
+  /** 已有本地违规时是否跳过远程检查。 */
   readonly skipRemoteCheckWhenAlreadyRejected: boolean
 }
 
+/** 构造底层 PasswordPolicy 所需的组件。 */
 export interface PasswordPolicyDependencies {
+  /** 必需的本地弱密码名单。 */
   readonly blocklist: PasswordBlocklist
+  /** 上下文检查器；缺省时不含全局词。 */
   readonly contextChecker?: ContextPasswordChecker
+  /** 强度估算器；缺省表示关闭。 */
   readonly strengthEstimator?: StrengthEstimator
+  /** 泄露密码检查器；缺省表示关闭。 */
   readonly pwnedChecker?: PwnedPasswordChecker
+  /** 默认策略的局部覆盖。 */
   readonly config?: Partial<PasswordPolicyConfig>
 }
 
+/** 单次底层策略评估选项。 */
 export interface AssessOptions {
+  /** 是否使用 MFA 场景最小长度。 */
   readonly mfaProtected: boolean
+  /** 当前用户与业务上下文。 */
   readonly context?: PasswordContext
+  /** 传递给远程泄露检查器的取消信号。 */
   readonly signal?: AbortSignal
 }
 
+/** 推荐的只读默认策略。 */
 export const DEFAULT_PASSWORD_POLICY: PasswordPolicyConfig = {
   minLengthSingleFactor: 15,
   minLengthWithMfa: 8,
@@ -70,6 +90,9 @@ function contextUserInputs(context: PasswordContext): string[] {
   ].filter((value): value is string => Boolean(value))
 }
 
+/**
+ * 底层密码策略编排器。多数应用应优先使用 PassGuard。
+ */
 export class PasswordPolicy {
   readonly #blocklist: PasswordBlocklist
   readonly #contextChecker: ContextPasswordChecker
@@ -77,6 +100,11 @@ export class PasswordPolicy {
   readonly #pwnedChecker: PwnedPasswordChecker | undefined
   readonly #config: PasswordPolicyConfig
 
+  /**
+   * 创建策略并验证最终配置。
+   *
+   * @param dependencies 本地名单及可选组件
+   */
   constructor(dependencies: PasswordPolicyDependencies) {
     this.#blocklist = dependencies.blocklist
     this.#contextChecker = dependencies.contextChecker ?? new ContextPasswordChecker()
@@ -102,6 +130,12 @@ export class PasswordPolicy {
     }
   }
 
+  /**
+   * 按长度、名单、上下文、强度和泄露状态依次评估密码。
+   *
+   * @param password 原始密码
+   * @param options 当前 MFA 状态、上下文和取消信号
+   */
   async assess(password: string, options: AssessOptions): Promise<PasswordAssessment> {
     const normalized = normalizePassword(password)
     const length = countUnicodeCodePoints(normalized)
