@@ -1,6 +1,6 @@
 # passguard-kit JavaScript / TypeScript API 参考
 
-适用于 `passguard-kit@1.0.3`，原生 ESM，支持现代浏览器和 Node.js 20 及以上版本。
+适用于 `passguard-kit@2.0.0`，原生 ESM，支持现代浏览器和 Node.js 20 及以上版本。
 
 - [返回项目主页](https://github.com/wybaby168/passguard)
 - [JavaScript 快速接入](README.md)

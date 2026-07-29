@@ -1,4 +1,4 @@
-package io.github.wybaby168.passguard;
+package dev.flyfish.passguard;
 
 /**
  * HIBP 或其他泄露密码检查器不可用时的处理方式。

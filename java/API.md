@@ -1,6 +1,6 @@
 # PassGuard Java API 参考
 
-适用于 `dev.flyfish:passguard:1.0.3`，运行环境为 Java 8 及以上版本。
+适用于 `dev.flyfish:passguard:2.0.0`，运行环境为 Java 8 及以上版本。
 
 - [返回项目主页](../README.md)
 - [Java 快速接入](README.md)
@@ -26,17 +26,21 @@
 <dependency>
   <groupId>dev.flyfish</groupId>
   <artifactId>passguard</artifactId>
-  <version>1.0.3</version>
+  <version>2.0.0</version>
 </dependency>
 ```
 
 ```java
-import io.github.wybaby168.passguard.PassGuard;
-import io.github.wybaby168.passguard.PasswordAssessment;
-import io.github.wybaby168.passguard.PasswordContext;
+import dev.flyfish.passguard.PassGuard;
+import dev.flyfish.passguard.PasswordAssessment;
+import dev.flyfish.passguard.PasswordContext;
 ```
 
-公共 Java 包名为 `io.github.wybaby168.passguard`。
+公共 Java 包名为 `dev.flyfish.passguard`。
+
+从 `1.x` 升级到 `2.0.0` 时，将 import 前缀由
+`io.github.wybaby168.passguard` 替换为 `dev.flyfish.passguard`。
+Maven 坐标和公开类型名称不变。
 
 ## `PassGuard`
 
@@ -347,4 +351,4 @@ PasswordAssessment result =
 
 ## `Example`
 
-`io.github.wybaby168.passguard.Example` 是固定演示值的独立启动示例，用于发行验证；业务集成不应依赖该类。
+`dev.flyfish.passguard.Example` 是固定演示值的独立启动示例，用于发行验证；业务集成不应依赖该类。

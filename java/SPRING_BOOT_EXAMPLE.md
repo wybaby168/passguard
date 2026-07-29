@@ -1,7 +1,7 @@
 # Spring Boot 接入示例
 
 ```java
-import io.github.wybaby168.passguard.PassGuard;
+import dev.flyfish.passguard.PassGuard;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,9 +20,9 @@ class PasswordSecurityConfiguration {
 在领域服务而不是仅在 Controller/Bean Validation 中执行：
 
 ```java
-import io.github.wybaby168.passguard.PassGuard;
-import io.github.wybaby168.passguard.PasswordAssessment;
-import io.github.wybaby168.passguard.PasswordContext;
+import dev.flyfish.passguard.PassGuard;
+import dev.flyfish.passguard.PasswordAssessment;
+import dev.flyfish.passguard.PasswordContext;
 
 import java.util.Collections;
 

@@ -1,4 +1,4 @@
-package io.github.wybaby168.passguard;
+package dev.flyfish.passguard;
 
 /**
  * 泄露密码检查状态。

@@ -1,4 +1,4 @@
-package io.github.wybaby168.passguard;
+package dev.flyfish.passguard;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -85,7 +85,7 @@ public final class HibpPwnedPasswordClient implements PwnedPasswordChecker {
             connection.setUseCaches(false);
             connection.setRequestProperty("Accept", "text/plain");
             connection.setRequestProperty("Add-Padding", "true");
-            connection.setRequestProperty("User-Agent", "passguard-java/1.0.3");
+            connection.setRequestProperty("User-Agent", "passguard-java/2.0.0");
 
             int statusCode = connection.getResponseCode();
             if (statusCode != HttpURLConnection.HTTP_OK) {

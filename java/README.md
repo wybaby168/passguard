@@ -12,18 +12,21 @@ Java 8+ 的弱密码防御库，内置 125,691 条高频名单、nbvcxz 强度�
 <dependency>
   <groupId>dev.flyfish</groupId>
   <artifactId>passguard</artifactId>
-  <version>1.0.3</version>
+  <version>2.0.0</version>
 </dependency>
 ```
 
 从 `1.0.2` 开始，主 JAR 以 Java 8 字节码（class major version 52）发布，并在真实 JDK 8 上完成编译、测试和独立启动验证；同一产物也持续在 Java 11、17、21 和 25 上测试。
 
+`2.0.0` 将 Java 包统一为 `dev.flyfish.passguard`，与 Maven 坐标保持一致。
+由 `1.x` 升级时更新 import 即可，Maven 坐标和策略 API 不变。
+
 ## 最快接入
 
 ```java
-import io.github.wybaby168.passguard.PassGuard;
-import io.github.wybaby168.passguard.PasswordAssessment;
-import io.github.wybaby168.passguard.PasswordContext;
+import dev.flyfish.passguard.PassGuard;
+import dev.flyfish.passguard.PasswordAssessment;
+import dev.flyfish.passguard.PasswordContext;
 
 import java.util.Collections;
 

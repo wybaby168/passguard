@@ -1,4 +1,4 @@
-package io.github.wybaby168.passguard;
+package dev.flyfish.passguard;
 
 /**
  * 稳定的密码策略违规码。业务逻辑应判断枚举值，而不是解析提示文案。

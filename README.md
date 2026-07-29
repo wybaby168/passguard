@@ -80,14 +80,14 @@ const localGuard = createPassGuard({ pwnedChecker: false })
 <dependency>
   <groupId>dev.flyfish</groupId>
   <artifactId>passguard</artifactId>
-  <version>1.0.3</version>
+  <version>2.0.0</version>
 </dependency>
 ```
 
 ```java
-import io.github.wybaby168.passguard.PassGuard;
-import io.github.wybaby168.passguard.PasswordAssessment;
-import io.github.wybaby168.passguard.PasswordContext;
+import dev.flyfish.passguard.PassGuard;
+import dev.flyfish.passguard.PasswordAssessment;
+import dev.flyfish.passguard.PasswordContext;
 
 import java.util.Collections;
 
@@ -119,6 +119,10 @@ PassGuard local = PassGuard.localOnly();    // 不访问外部网络
 `PassGuard` 实例无状态且可复用。Java 服务中应把它注册为单例 Bean，不能每个请求重复加载名单。
 
 Java 包从 `1.0.2` 开始以 Java 8 字节码（class major version 52）发布，并在真实 JDK 8 上执行完整测试；同一 JAR 可直接用于 Java 8、11、17、21、25。
+
+> `2.0.0` 将 Java 包统一为 `dev.flyfish.passguard`，与 Maven 坐标
+> `dev.flyfish:passguard` 保持一致。由 `1.x` 升级时只需更新 import，
+> 策略 API 和 Maven 坐标不变。
 
 ## 判定结果
 

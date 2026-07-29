@@ -1,4 +1,4 @@
-package io.github.wybaby168.passguard;
+package dev.flyfish.passguard;
 
 import java.time.Year;
 import java.time.ZoneOffset;

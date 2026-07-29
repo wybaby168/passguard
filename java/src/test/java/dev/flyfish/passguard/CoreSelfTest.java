@@ -1,4 +1,4 @@
-package io.github.wybaby168.passguard;
+package dev.flyfish.passguard;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

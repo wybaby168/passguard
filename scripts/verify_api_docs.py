@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-JAVA_SOURCE = ROOT / "java/src/main/java/io/github/wybaby168/passguard"
+JAVA_SOURCE = ROOT / "java/src/main/java/dev/flyfish/passguard"
 JAVA_DOC = ROOT / "java/API.md"
 TS_SOURCE = ROOT / "frontend/src"
 TS_DOC = ROOT / "frontend/API.md"

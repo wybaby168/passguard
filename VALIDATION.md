@@ -1,4 +1,4 @@
-# PassGuard 1.0.3 验证记录
+# PassGuard 2.0.0 验证记录
 
 验证日期：2026-07-29（Asia/Shanghai）。
 
@@ -31,6 +31,7 @@
 
 - 完整 API 参考覆盖 68 个公开类型、常量与业务方法；公开 API 均提供 Javadoc，
   Javadoc JAR 可由 Maven Central 和 javadoc.io 直接访问。
+- Java 包与自动模块名统一为 `dev.flyfish.passguard`，与 Maven 坐标一致。
 - Java 8 目标编译通过，并使用真实 JDK 8 运行全部测试。
 - Maven Compiler 3.15.0、Surefire 3.5.6、JAR 3.5.1、Source 3.4.0
   已在真实 JDK 8 上完成构建，并在 JDK 21 上完成发布产物验证。
@@ -49,7 +50,7 @@
   - 上述四项的 GPG 签名。
 - 签名密钥指纹：`C4B132940C188FE1C013B3A3DF2CC947BCDF2931`。
 - JAR 包含 `META-INF/LICENSE`、`META-INF/NOTICE.md`、自动模块名和 125,691 条默认名单。
-- 从构建 JAR 独立启动 `io.github.wybaby168.passguard.Example` 通过。
+- 从构建 JAR 独立启动 `dev.flyfish.passguard.Example` 通过。
 
 ## 依赖更新稳定策略
 
