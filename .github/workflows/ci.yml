@@ -2,6 +2,7 @@ name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
 
 permissions:
@@ -62,7 +63,8 @@ jobs:
       - run: mvn -B -ntp clean verify
 
   benchmark:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: java
@@ -71,18 +73,19 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: "17.0.19+10"
           cache: maven
       - run: mvn -B -ntp -pl passguard-benchmarks -am package -DskipTests
       - run: >-
           java -jar passguard-benchmarks/target/passguard-benchmarks.jar
-          -wi 1 -i 2 -w 500ms -r 500ms -f 1
+          -wi 3 -i 5 -w 1s -r 1s -f 1
           -rf json -rff passguard-benchmarks/target/jmh-result.json
       - run: >-
           python ../scripts/check_jmh_regression.py
           passguard-benchmarks/baseline.json
           passguard-benchmarks/target/jmh-result.json
       - uses: actions/upload-artifact@v7
+        if: always()
         with:
           name: jmh-result
           path: java/passguard-benchmarks/target/jmh-result.json
