@@ -28,6 +28,15 @@ class PasswordPolicyTest {
     }
 
     @Test
+    void blocksCaseAndCompatibilityVariantsOfWeakPasswords() {
+        LocalBlocklist list = new LocalBlocklist(
+                Collections.singletonList("password"));
+
+        assertTrue(list.contains("PASSWORD"));
+        assertTrue(list.contains("ｐａｓｓｗｏｒｄ"));
+    }
+
+    @Test
     void rejectsCommonAndContextPasswords() {
         PasswordPolicy policy = new PasswordPolicy(
                 PasswordPolicyConfig.secureDefaults(),
