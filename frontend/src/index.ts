@@ -1,4 +1,5 @@
 export * from './context.js'
+export * from './generator.js'
 export * from './hibp.js'
 export * from './local-blocklist.js'
 export * from './normalize.js'

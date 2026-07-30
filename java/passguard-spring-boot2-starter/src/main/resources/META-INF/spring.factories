@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+dev.flyfish.passguard.spring.PassGuardCryptoAutoConfiguration,\
+dev.flyfish.passguard.spring.PassGuardActuatorSanitizationConfiguration

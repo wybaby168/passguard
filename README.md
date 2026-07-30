@@ -5,13 +5,18 @@
 [![npm](https://img.shields.io/npm/v/passguard-kit)](https://www.npmjs.com/package/passguard-kit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-PassGuard 是面向注册、改密和密码重置场景的弱密码防御库。它把本地高频弱密码名单、用户/企业上下文、可猜测性评分和 HIBP 泄露密码查询组合成一个易用 API，并同时提供 Java 8+ 与 TypeScript/JavaScript 版本。
+PassGuard 是模块化密码安全工具包。它同时覆盖弱密码防御、安全密码生成、登录密码哈希、密钥轮换、配置文件解密，以及 MyBatis、JPA/Hibernate、R2DBC 数据库字段透明加解密。核心模块支持 Java 8，JavaScript 生成器支持现代浏览器和 Node.js 20+。
 
-> 这是防御工具，不是密码生成器，也不是密码存储库。校验通过后仍须使用 Argon2id、scrypt 或合规参数的 PBKDF2 保存密码。
+> 登录密码必须使用 Argon2id/PBKDF2 等不可逆哈希；AES-GCM 可逆加密只用于必须恢复明文的数据库连接口令、第三方凭据和 API 密钥。
 
 ## 核心能力
 
 - **开箱即用**：Java `PassGuard.create()`；JavaScript `createPassGuard()`。
+- **安全生成与哈希**：Java/JS 使用密码学安全随机源生成密码；Java 提供 Argon2id 和 PBKDF2。
+- **认证加密与轮换**：AES-256-GCM、版本化 key id、环境变量、PKCS12/JCEKS 与 `KeyProvider` SPI。
+- **透明数据库保护**：一个 `@Encrypted` 完成写入加密、查询解密；可选 HMAC 盲索引支持等值查询。
+- **配置文件解密**：Spring Boot 2/3 Starter 通过 jasypt-spring-boot 处理 `ENC(...)`，注入值保持明文。
+- **前端响应排除**：Jackson 自动把 `@Encrypted` 属性设为 write-only，不返回掩码或密文。
 - **本地高频拦截**：浏览器内置 25,000 条、Java 内置 125,691 条，使用 `Set` 做平均 O(1) 整串查询。
 - **上下文拦截**：识别用户名、邮箱前缀、显示名、产品名、企业名及常见年份/数字变体。
 - **强度估算**：Java 使用 nbvcxz，JavaScript 使用 zxcvbn-ts；不是机械要求大小写和特殊字符。
@@ -80,7 +85,7 @@ const localGuard = createPassGuard({ pwnedChecker: false })
 <dependency>
   <groupId>dev.flyfish</groupId>
   <artifactId>passguard</artifactId>
-  <version>2.0.0</version>
+  <version>2.1.0</version>
 </dependency>
 ```
 
@@ -123,6 +128,93 @@ Java 包从 `1.0.2` 开始以 Java 8 字节码（class major version 52）发布
 > `2.0.0` 将 Java 包统一为 `dev.flyfish.passguard`，与 Maven 坐标
 > `dev.flyfish:passguard` 保持一致。由 `1.x` 升级时只需更新 import，
 > 策略 API 和 Maven 坐标不变。
+
+## 按需选择 Java 模块
+
+| 需求 | Maven artifactId | Java |
+|---|---|---:|
+| 弱密码检测 | `passguard` | 8+ |
+| 安全密码生成 | `passguard-generator` | 8+ |
+| Argon2id / PBKDF2 | `passguard-password-hash` | 8+ |
+| AES-GCM、密钥和注解 | `passguard-crypto-core` | 8+ |
+| JSON 响应排除 | `passguard-crypto-jackson` | 8+ |
+| MyBatis | `passguard-crypto-mybatis` | 8+ |
+| JPA 2.2 / Hibernate 5 | `passguard-crypto-jpa-javax` | 8+ |
+| Jakarta / Hibernate 6 | `passguard-crypto-jpa-jakarta` | 17+ |
+| R2DBC | `passguard-crypto-r2dbc-boot2` / `passguard-crypto-r2dbc-boot3` | 8 / 17 |
+| 配置文件解密 | `passguard-spring-boot2-starter` / `passguard-spring-boot3-starter` | 8 / 17 |
+
+推荐先导入 BOM，再只声明需要的模块：
+
+```xml
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>dev.flyfish</groupId>
+      <artifactId>passguard-bom</artifactId>
+      <version>2.1.0</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+```
+
+## 密码生成与登录密码哈希
+
+```java
+import dev.flyfish.passguard.generator.SecurePasswordGenerator;
+import dev.flyfish.passguard.hash.PasswordHasher;
+import dev.flyfish.passguard.hash.PasswordHashers;
+
+String generated = new SecurePasswordGenerator().generate();
+
+PasswordHasher hasher = PasswordHashers.argon2id();
+String storedHash = hasher.hash(userPassword);
+boolean matches = hasher.verify(loginPassword, storedHash);
+```
+
+JavaScript 可以只加载生成器子路径：
+
+```ts
+import { generatePassword } from 'passguard-kit/generator'
+
+const password = generatePassword({ length: 24, excludeAmbiguous: true })
+```
+
+## 数据库字段透明加解密
+
+```java
+import dev.flyfish.passguard.crypto.annotation.BlindIndex;
+import dev.flyfish.passguard.crypto.annotation.Encrypted;
+
+class ExternalCredential {
+    @Encrypted(keyAlias = "data", context = "external_credential.password")
+    private String password;
+
+    @BlindIndex(
+        source = "password",
+        keyAlias = "index",
+        context = "external_credential.password_index"
+    )
+    private String passwordIndex;
+}
+```
+
+再引入当前项目使用的 MyBatis、JPA 或 R2DBC 适配模块即可。Spring Boot 会自动注册适配器；数据库保存 `PG1...` 密文，业务实体读取到明文，Jackson 响应不包含 `password`。
+
+环境变量密钥约定：
+
+```text
+PASSGUARD_KEY_DATA_ACTIVE=v1
+PASSGUARD_KEY_DATA_V1=<32 字节随机密钥的 Base64>
+PASSGUARD_KEY_INDEX_ACTIVE=v1
+PASSGUARD_KEY_INDEX_V1=<另一把 32 字节随机密钥的 Base64>
+PASSGUARD_KEY_CONFIG_ACTIVE=v1
+PASSGUARD_KEY_CONFIG_V1=<另一把 32 字节随机密钥的 Base64>
+```
+
+配置文件写入 `ENC(PG1...)`，Spring 的 `Environment`、`@Value` 和 `@ConfigurationProperties` 获得明文。密钥不能写回 `application.yml`。
 
 ## 判定结果
 
@@ -174,9 +266,16 @@ const guard = createPassGuard({
 
 Java 测试在 5 秒预算内执行 50,000 次完整本地策略校验，当前机器实测约 48 ms。以上数据用于回归对比，不代表所有硬件上的绝对承诺；真实总延迟通常由 zxcvbn/nbvcxz 计算和 HIBP 网络往返主导。运行自己的基准：
 
+发布 CI 还使用 JMH 覆盖 32/128/1024 字节 AES-GCM、注解元数据缓存和安全密码生成；
+CI 固定 Ubuntu 24.04、Temurin 17.0.19 和预热/测量参数，结果与已提交基线比较，
+吞吐下降超过 15% 会阻止合并，并始终保留原始 JSON 供审计。Argon2id 是故意的慢操作，
+单独验证默认参数的交互延迟，不与快速加密吞吐混为一谈。
+
 ```bash
 cd frontend && npm run benchmark
 cd ../java && mvn test
+mvn -pl passguard-benchmarks -am package
+java -jar passguard-benchmarks/target/passguard-benchmarks.jar
 ```
 
 ## 正确部署
@@ -202,12 +301,12 @@ cd ../java && mvn test
 ## 开发与验证
 
 ```bash
-# JavaScript：严格类型检查 + 10 项测试
+# JavaScript：严格类型检查 + 全部测试
 cd frontend
 npm ci
 npm test
 
-# Java：Java 8 目标编译 + 9 项测试
+# Java：Java 8/17 分层编译 + 全部模块测试
 cd ../java
 mvn clean test
 

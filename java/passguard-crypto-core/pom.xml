@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>dev.flyfish</groupId>
+    <artifactId>passguard-parent</artifactId>
+    <version>2.1.0</version>
+  </parent>
+  <artifactId>passguard-crypto-core</artifactId>
+  <name>PassGuard Crypto Core</name>
+  <description>AES-256-GCM、密钥轮换、盲索引与数据库字段注解</description>
+  <dependencies>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

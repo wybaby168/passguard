@@ -1,7 +1,7 @@
 {
   "name": "passguard-kit",
-  "version": "2.0.0",
-  "description": "开箱即用的弱密码、本地黑名单、上下文、强度与 HIBP 泄露检测工具包",
+  "version": "2.1.0",
+  "description": "开箱即用的密码生成、弱密码、本地黑名单、上下文、强度与 HIBP 泄露检测工具包",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -9,6 +9,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./generator": {
+      "types": "./dist/generator.d.ts",
+      "import": "./dist/generator.js"
     }
   },
   "files": [
@@ -46,7 +50,8 @@
     "blocklist",
     "hibp",
     "zxcvbn",
-    "weak-password"
+    "weak-password",
+    "password-generator"
   ],
   "author": "wybaby168",
   "license": "MIT",

@@ -1,0 +1,18 @@
+{
+  "allowed_regression": 0.15,
+  "score_unit": "ops/s",
+  "benchmarks": {
+    "dev.flyfish.passguard.benchmark.CryptoBenchmark.decrypt|size=32": 200000,
+    "dev.flyfish.passguard.benchmark.CryptoBenchmark.decrypt|size=128": 180000,
+    "dev.flyfish.passguard.benchmark.CryptoBenchmark.decrypt|size=1024": 150000,
+    "dev.flyfish.passguard.benchmark.CryptoBenchmark.encrypt|size=32": 220000,
+    "dev.flyfish.passguard.benchmark.CryptoBenchmark.encrypt|size=128": 200000,
+    "dev.flyfish.passguard.benchmark.CryptoBenchmark.encrypt|size=1024": 150000,
+    "dev.flyfish.passguard.benchmark.CryptoBenchmark.metadataCacheHit|size=32": 75000000,
+    "dev.flyfish.passguard.benchmark.CryptoBenchmark.metadataCacheHit|size=128": 75000000,
+    "dev.flyfish.passguard.benchmark.CryptoBenchmark.metadataCacheHit|size=1024": 75000000,
+    "dev.flyfish.passguard.benchmark.CryptoBenchmark.generatePassword|size=32": 100000,
+    "dev.flyfish.passguard.benchmark.CryptoBenchmark.generatePassword|size=128": 100000,
+    "dev.flyfish.passguard.benchmark.CryptoBenchmark.generatePassword|size=1024": 100000
+  }
+}

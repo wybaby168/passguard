@@ -2,6 +2,7 @@ name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
 
 permissions:
@@ -19,7 +20,7 @@ jobs:
         working-directory: frontend
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
           cache: npm
@@ -27,6 +28,20 @@ jobs:
       - run: npm ci
       - run: npm audit --omit=dev
       - run: npm test
+      - name: Browser Web Crypto smoke test
+        if: matrix.node == 24
+        run: |
+          python3 -m http.server 4173 >/tmp/passguard-browser-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for attempt in 1 2 3 4 5; do
+            curl --fail --silent http://127.0.0.1:4173/tests/browser-smoke.html >/dev/null && break
+            sleep 1
+          done
+          google-chrome --headless --no-sandbox --disable-gpu \
+            --virtual-time-budget=3000 --dump-dom \
+            http://127.0.0.1:4173/tests/browser-smoke.html \
+            | grep 'data-result="pass"'
       - run: npm pack --dry-run
 
   java:
@@ -47,16 +62,61 @@ jobs:
           cache: maven
       - run: mvn -B -ntp clean verify
 
+  benchmark:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: java
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17.0.19+10"
+          cache: maven
+      - run: mvn -B -ntp -pl passguard-benchmarks -am package -DskipTests
+      - run: >-
+          java -jar passguard-benchmarks/target/passguard-benchmarks.jar
+          -wi 3 -i 5 -w 1s -r 1s -f 1
+          -rf json -rff passguard-benchmarks/target/jmh-result.json
+      - run: >-
+          python ../scripts/check_jmh_regression.py
+          passguard-benchmarks/baseline.json
+          passguard-benchmarks/target/jmh-result.json
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: jmh-result
+          path: java/passguard-benchmarks/target/jmh-result.json
+
+  boot35-jasypt4:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: java
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+      - run: >-
+          mvn -B -ntp -Pboot35-jasypt4
+          -pl passguard-spring-boot3-starter -am clean test
+
   data:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
       - run: scripts/generate_checksums.sh
       - run: git diff --exit-code -- checksums.sha256
       - run: python -m py_compile scripts/update_lists.py
+      - run: python -m py_compile scripts/check_jmh_regression.py
       - run: python scripts/verify_api_docs.py
       - run: bash -n scripts/download_hibp.sh
       - run: python scripts/update_lists.py --input-dir data/source --ref 2026.1

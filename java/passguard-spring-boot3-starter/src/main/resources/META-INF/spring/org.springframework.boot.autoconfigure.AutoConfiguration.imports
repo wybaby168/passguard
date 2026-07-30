@@ -1,0 +1,2 @@
+dev.flyfish.passguard.spring.PassGuardCryptoAutoConfiguration
+dev.flyfish.passguard.spring.PassGuardActuatorSanitizationConfiguration

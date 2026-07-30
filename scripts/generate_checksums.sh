@@ -10,11 +10,13 @@ cd "$repository_root"
 find . -type f \
   -not -path './.git/*' \
   -not -path './.github/workflows/*' \
+  -not -path './.playwright-mcp/*' \
+  -not -path './site/*' \
   -not -path './frontend/node_modules/*' \
   -not -path './frontend/dist/*' \
   -not -path './frontend/package.json' \
   -not -path './frontend/package-lock.json' \
-  -not -path './java/target/*' \
+  -not -path '*/target/*' \
   -not -path './java/pom.xml' \
   -not -path '*/__pycache__/*' \
   -not -name '*.pyc' \

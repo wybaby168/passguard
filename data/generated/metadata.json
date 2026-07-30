@@ -1,6 +1,6 @@
 {
-  "kitVersion": "2.0.0",
-  "generatedAtUtc": "2026-07-29T03:12:14+00:00",
+  "kitVersion": "2.1.0",
+  "generatedAtUtc": "2026-07-30T03:42:05+00:00",
   "normalization": "Unicode NFC; exact whole-password matching; no trim",
   "seclistsPinnedRelease": "2026.1",
   "frontend": {

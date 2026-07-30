@@ -1,6 +1,6 @@
 # passguard-kit JavaScript / TypeScript API 参考
 
-适用于 `passguard-kit@2.0.0`，原生 ESM，支持现代浏览器和 Node.js 20 及以上版本。
+适用于 `passguard-kit@2.1.0`，原生 ESM，支持现代浏览器和 Node.js 20 及以上版本。
 
 - [返回项目主页](https://github.com/wybaby168/passguard)
 - [JavaScript 快速接入](README.md)
@@ -16,6 +16,7 @@
 | 完全控制底层组合 | `new PasswordPolicy(dependencies)` | 可选 |
 | 仅管理自定义弱密码名单 | `PasswordBlocklist` | 否 |
 | 仅查询 HIBP | `HibpPwnedPasswordClient` | 是 |
+| 只生成安全密码 | `generatePassword()` | 否 |
 
 多数应用只需要 `createPassGuard()` 和 `guard.check()`。底层导出用于自定义名单、企业内部泄露源、强度算法或测试替身。
 
@@ -34,6 +35,52 @@ import {
 ```
 
 包只提供 ESM 入口。TypeScript 声明随 npm 包发布。
+
+## 安全密码生成器
+
+可以从主入口导入，也可以使用不加载弱密码名单和 zxcvbn 的独立子路径：
+
+```ts
+import {
+  generatePassword,
+  type PasswordGenerationOptions,
+} from 'passguard-kit/generator'
+
+const generated = generatePassword({
+  length: 24,
+  minimumSymbols: 2,
+  excludeAmbiguous: true,
+})
+```
+
+### `generatePassword`
+
+```ts
+function generatePassword(options?: PasswordGenerationOptions): string
+```
+
+使用 `globalThis.crypto.getRandomValues`、32 位拒绝采样和 Fisher-Yates 洗牌。
+不存在 Web Crypto、数值不是安全整数、长度小于 4、类别最小数量之和超过长度，
+或字符表过滤后为空时抛出 `Error`。
+
+### `PasswordGenerationOptions`
+
+| 属性 | 类型 | 默认值 | 说明 |
+|---|---|---:|---|
+| `length` | `number` | 20 | 总 Unicode 字符数，至少 4 |
+| `minimumLowercase` | `number` | 1 | 最少小写字母 |
+| `minimumUppercase` | `number` | 1 | 最少大写字母 |
+| `minimumDigits` | `number` | 1 | 最少数字 |
+| `minimumSymbols` | `number` | 1 | 最少符号 |
+| `lowercaseAlphabet` | `string` | `DEFAULT_LOWERCASE` | 小写字母表 |
+| `uppercaseAlphabet` | `string` | `DEFAULT_UPPERCASE` | 大写字母表 |
+| `digitAlphabet` | `string` | `DEFAULT_DIGITS` | 数字表 |
+| `symbolAlphabet` | `string` | `DEFAULT_SYMBOLS` | 符号表 |
+| `excludeAmbiguous` | `boolean` | `false` | 排除 `0O1lI` |
+
+`DEFAULT_LOWERCASE`、`DEFAULT_UPPERCASE`、`DEFAULT_DIGITS` 和
+`DEFAULT_SYMBOLS` 均为公开只读默认字符表。生成器适合创建初始随机凭据，不取代
+`PassGuard` 对用户自选密码的弱密码和泄露检查。
 
 ## `createPassGuard`
 

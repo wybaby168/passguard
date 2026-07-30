@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>PassGuard browser smoke test</title>
+</head>
+<body data-result="pending">
+<script type="module">
+  import { generatePassword } from '../dist/generator.js'
+
+  try {
+    const password = generatePassword({ length: 24, minimumSymbols: 2 })
+    if (Array.from(password).length !== 24) {
+      throw new Error('unexpected password length')
+    }
+    if (!/[a-z]/u.test(password) || !/[A-Z]/u.test(password)
+        || !/[0-9]/u.test(password)) {
+      throw new Error('required character category missing')
+    }
+    document.body.dataset.result = 'pass'
+  } catch (error) {
+    document.body.dataset.result = 'fail'
+    document.body.textContent =
+      error instanceof Error ? error.message : String(error)
+  }
+</script>
+</body>
+</html>

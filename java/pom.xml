@@ -3,12 +3,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>dev.flyfish</groupId>
-  <artifactId>passguard</artifactId>
-  <version>2.0.0</version>
 
-  <name>PassGuard</name>
-  <description>开箱即用的 Java 弱密码、本地黑名单、上下文、强度与 HIBP 泄露检测工具包</description>
+  <groupId>dev.flyfish</groupId>
+  <artifactId>passguard-parent</artifactId>
+  <version>2.1.0</version>
+  <packaging>pom</packaging>
+
+  <name>PassGuard Parent</name>
+  <description>PassGuard 密码安全组件的统一构建与依赖管理</description>
   <url>https://github.com/wybaby168/passguard</url>
 
   <licenses>
@@ -18,87 +20,203 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-
   <developers>
     <developer>
       <name>wybaby168</name>
       <url>https://github.com/wybaby168</url>
     </developer>
   </developers>
-
   <scm>
     <connection>scm:git:https://github.com/wybaby168/passguard.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/wybaby168/passguard.git</developerConnection>
     <url>https://github.com/wybaby168/passguard</url>
-    <tag>v2.0.0</tag>
+    <tag>v2.1.0</tag>
   </scm>
+
+  <modules>
+    <module>passguard</module>
+    <module>passguard-generator</module>
+    <module>passguard-password-hash</module>
+    <module>passguard-crypto-core</module>
+    <module>passguard-benchmarks</module>
+    <module>passguard-crypto-jackson</module>
+    <module>passguard-crypto-mybatis</module>
+    <module>passguard-crypto-jpa-javax</module>
+    <module>passguard-crypto-r2dbc-boot2</module>
+    <module>passguard-spring-boot2-starter</module>
+    <module>passguard-bom</module>
+  </modules>
 
   <properties>
     <maven.compiler.release>8</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <project.build.outputTimestamp>2026-07-29T00:00:00Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2026-07-30T00:00:00Z</project.build.outputTimestamp>
     <junit.version>5.14.4</junit.version>
+    <bouncycastle.version>1.78.1</bouncycastle.version>
+    <jackson.version>2.17.2</jackson.version>
+    <mybatis.version>3.5.19</mybatis.version>
+    <spring-boot2.version>2.7.18</spring-boot2.version>
+    <spring-boot3.version>3.2.12</spring-boot3.version>
+    <spring-data-r2dbc2.version>1.5.12</spring-data-r2dbc2.version>
+    <spring-data-r2dbc3.version>3.2.12</spring-data-r2dbc3.version>
+    <r2dbc-spi2.version>0.9.1.RELEASE</r2dbc-spi2.version>
+    <jasypt-spring-boot.version>3.0.5</jasypt-spring-boot.version>
+    <hibernate5.version>5.6.15.Final</hibernate5.version>
+    <hibernate6.version>6.4.10.Final</hibernate6.version>
+    <jmh.version>1.37</jmh.version>
+    <testcontainers.version>1.20.6</testcontainers.version>
+    <postgresql-jdbc.version>42.7.5</postgresql-jdbc.version>
+    <r2dbc-postgresql2.version>0.9.3.RELEASE</r2dbc-postgresql2.version>
+    <r2dbc-postgresql3.version>1.0.7.RELEASE</r2dbc-postgresql3.version>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>me.gosimple</groupId>
-      <artifactId>nbvcxz</artifactId>
-      <version>1.5.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>dev.flyfish</groupId>
+        <artifactId>passguard</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.flyfish</groupId>
+        <artifactId>passguard-generator</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.flyfish</groupId>
+        <artifactId>passguard-password-hash</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.flyfish</groupId>
+        <artifactId>passguard-crypto-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.flyfish</groupId>
+        <artifactId>passguard-crypto-jackson</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.flyfish</groupId>
+        <artifactId>passguard-crypto-mybatis</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.flyfish</groupId>
+        <artifactId>passguard-crypto-jpa-javax</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.flyfish</groupId>
+        <artifactId>passguard-crypto-jpa-jakarta</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.flyfish</groupId>
+        <artifactId>passguard-crypto-r2dbc-boot2</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.flyfish</groupId>
+        <artifactId>passguard-crypto-r2dbc-boot3</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.flyfish</groupId>
+        <artifactId>passguard-spring-boot2-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.flyfish</groupId>
+        <artifactId>passguard-spring-boot3-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${junit.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-      <resource>
-        <directory>..</directory>
-        <targetPath>META-INF</targetPath>
-        <includes>
-          <include>LICENSE</include>
-          <include>NOTICE.md</include>
-        </includes>
-      </resource>
-    </resources>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.15.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.5.6</version>
+          <configuration>
+            <useModulePath>false</useModulePath>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.5.1</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.15.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.5.6</version>
-        <configuration>
-          <useModulePath>false</useModulePath>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.5.1</version>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <Automatic-Module-Name>dev.flyfish.passguard</Automatic-Module-Name>
-            </manifestEntries>
-          </archive>
-        </configuration>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.6.2</version>
+        <executions>
+          <execution>
+            <id>dependency-convergence</id>
+            <phase>validate</phase>
+            <goals><goal>enforce</goal></goals>
+            <configuration>
+              <rules>
+                <dependencyConvergence>
+                  <excludedScopes>
+                    <excludedScope>test</excludedScope>
+                    <excludedScope>provided</excludedScope>
+                  </excludedScopes>
+                </dependencyConvergence>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
 
   <profiles>
+    <profile>
+      <id>java17-modules</id>
+      <activation>
+        <jdk>[17,)</jdk>
+      </activation>
+      <modules>
+        <module>passguard-crypto-jpa-jakarta</module>
+        <module>passguard-crypto-r2dbc-boot3</module>
+        <module>passguard-spring-boot3-starter</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>boot35-jasypt4</id>
+      <properties>
+        <spring-boot3.version>3.5.16</spring-boot3.version>
+        <jasypt-spring-boot.version>4.0.4</jasypt-spring-boot.version>
+      </properties>
+    </profile>
     <profile>
       <id>release</id>
       <build>
@@ -110,9 +228,7 @@
             <executions>
               <execution>
                 <id>attach-sources</id>
-                <goals>
-                  <goal>jar-no-fork</goal>
-                </goals>
+                <goals><goal>jar-no-fork</goal></goals>
               </execution>
             </executions>
           </plugin>
@@ -127,9 +243,7 @@
             <executions>
               <execution>
                 <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
+                <goals><goal>jar</goal></goals>
               </execution>
             </executions>
           </plugin>
@@ -141,9 +255,7 @@
               <execution>
                 <id>sign-release-artifacts</id>
                 <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
+                <goals><goal>sign</goal></goals>
               </execution>
             </executions>
           </plugin>

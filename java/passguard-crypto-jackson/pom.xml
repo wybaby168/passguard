@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>dev.flyfish</groupId>
+    <artifactId>passguard-parent</artifactId>
+    <version>2.1.0</version>
+  </parent>
+  <artifactId>passguard-crypto-jackson</artifactId>
+  <name>PassGuard Jackson Adapter</name>
+  <description>从 JSON 响应中排除 @Encrypted 字段</description>
+  <dependencies>
+    <dependency>
+      <groupId>dev.flyfish</groupId>
+      <artifactId>passguard-crypto-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+      <version>${spring-boot2.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

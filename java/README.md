@@ -1,6 +1,6 @@
-# PassGuard Java
+# PassGuard Java 2.1
 
-Java 8+ 的弱密码防御库，内置 125,691 条高频名单、nbvcxz 强度估算、上下文变体和 HIBP k-anonymity 查询。
+模块化 Java 密码安全工具包。除原有弱密码名单、nbvcxz、上下文和 HIBP 外，新增安全生成、Argon2id/PBKDF2、AES-256-GCM、密钥轮换、Jasypt 配置解密和数据库透明加解密。
 
 - [完整 Java API 参考](API.md)
 - [在线 Javadoc](https://javadoc.io/doc/dev.flyfish/passguard/latest/index.html)
@@ -12,7 +12,7 @@ Java 8+ 的弱密码防御库，内置 125,691 条高频名单、nbvcxz 强度�
 <dependency>
   <groupId>dev.flyfish</groupId>
   <artifactId>passguard</artifactId>
-  <version>2.0.0</version>
+  <version>2.1.0</version>
 </dependency>
 ```
 
@@ -20,6 +20,47 @@ Java 8+ 的弱密码防御库，内置 125,691 条高频名单、nbvcxz 强度�
 
 `2.0.0` 将 Java 包统一为 `dev.flyfish.passguard`，与 Maven 坐标保持一致。
 由 `1.x` 升级时更新 import 即可，Maven 坐标和策略 API 不变。
+
+`2.1.0` 改为 Maven Reactor，但原有 `dev.flyfish:passguard` 坐标和公开 API 不变。
+新增能力均是独立 artifact，通过 `passguard-bom` 统一版本；模块选型和完整 API 见
+[Java API 参考](API.md)。
+
+## 安全密码生成
+
+```java
+import dev.flyfish.passguard.generator.PasswordGenerationOptions;
+import dev.flyfish.passguard.generator.SecurePasswordGenerator;
+
+PasswordGenerationOptions options = PasswordGenerationOptions.builder()
+    .length(24)
+    .excludeAmbiguous(true)
+    .build();
+
+String password = new SecurePasswordGenerator().generate(options);
+```
+
+## 登录密码哈希
+
+```java
+import dev.flyfish.passguard.hash.PasswordHasher;
+import dev.flyfish.passguard.hash.PasswordHashers;
+
+PasswordHasher hasher = PasswordHashers.argon2id();
+String encoded = hasher.hash(passwordChars);
+
+if (!hasher.verify(candidateChars, encoded)) {
+    throw new AuthenticationException();
+}
+if (hasher.needsRehash(encoded)) {
+    // 登录成功后使用当前参数重新哈希。
+}
+```
+
+## 配置与数据库加密
+
+只引入当前框架对应的适配器和 Boot Starter。完整的 `@Encrypted`、盲索引、
+环境变量/KeyStore、MyBatis、JPA、R2DBC 与 `ENC(...)` 示例见
+[Spring Boot 接入示例](SPRING_BOOT_EXAMPLE.md)。
 
 ## 最快接入
 

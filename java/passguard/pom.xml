@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>dev.flyfish</groupId>
+    <artifactId>passguard-parent</artifactId>
+    <version>2.1.0</version>
+  </parent>
+  <artifactId>passguard</artifactId>
+  <name>PassGuard Password Policy</name>
+  <description>弱密码、本地黑名单、上下文、强度与泄露密码检测</description>
+  <dependencies>
+    <dependency>
+      <groupId>me.gosimple</groupId>
+      <artifactId>nbvcxz</artifactId>
+      <version>1.5.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <!-- 保留 2.0.0 的源码位置，避免大名单与历史链接失效。 -->
+    <sourceDirectory>${project.basedir}/../src/main/java</sourceDirectory>
+    <testSourceDirectory>${project.basedir}/../src/test/java</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/../src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/../..</directory>
+        <targetPath>META-INF</targetPath>
+        <includes>
+          <include>LICENSE</include>
+          <include>NOTICE.md</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Automatic-Module-Name>dev.flyfish.passguard</Automatic-Module-Name>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
