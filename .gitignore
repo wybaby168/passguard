@@ -8,7 +8,7 @@ frontend/node_modules/
 frontend/dist/
 frontend/*.tgz
 
-java/target/
+java/**/target/
 
 __pycache__/
 *.py[cod]

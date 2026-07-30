@@ -85,7 +85,7 @@ public final class HibpPwnedPasswordClient implements PwnedPasswordChecker {
             connection.setUseCaches(false);
             connection.setRequestProperty("Accept", "text/plain");
             connection.setRequestProperty("Add-Padding", "true");
-            connection.setRequestProperty("User-Agent", "passguard-java/2.0.0");
+            connection.setRequestProperty("User-Agent", "passguard-java/2.1.0");
 
             int statusCode = connection.getResponseCode();
             if (statusCode != HttpURLConnection.HTTP_OK) {

@@ -1,11 +1,238 @@
 # PassGuard Java API 参考
 
-适用于 `dev.flyfish:passguard:2.0.0`，运行环境为 Java 8 及以上版本。
+适用于 PassGuard `2.1.0`。核心、生成、哈希、加密、MyBatis、JPA 2.2 与
+Boot 2 模块支持 Java 8；Jakarta、Hibernate 6 与 Boot 3 模块使用 Java 17。
 
 - [返回项目主页](../README.md)
 - [Java 快速接入](README.md)
 - [Spring Boot 示例](SPRING_BOOT_EXAMPLE.md)
 - [在线 Javadoc](https://javadoc.io/doc/dev.flyfish/passguard/latest/index.html)
+
+## 模块选择
+
+| artifactId | 公开入口 | 说明 |
+|---|---|---|
+| `passguard` | `PassGuard` | 原有弱密码策略，API 向后兼容 |
+| `passguard-generator` | `SecurePasswordGenerator` | 安全密码生成 |
+| `passguard-password-hash` | `PasswordHasher`、`PasswordHashers` | Argon2id/PBKDF2 |
+| `passguard-crypto-core` | `CipherService`、`KeyProvider`、`@Encrypted` | 加密与密钥核心 |
+| `passguard-crypto-jackson` | `PassGuardJacksonModule` | 响应字段排除 |
+| `passguard-crypto-mybatis` | `PassGuardMyBatisPlugin` | MyBatis 透明适配 |
+| `passguard-crypto-jpa-javax` | `PassGuardHibernate5Integrator` | Hibernate 5 事件系统 |
+| `passguard-crypto-jpa-jakarta` | `PassGuardHibernate6Integrator` | Hibernate 6 事件系统 |
+| `passguard-crypto-r2dbc-boot2/3` | `PassGuardR2dbcCallbacks` | R2DBC 回调 |
+| `passguard-spring-boot2/3-starter` | `PassGuardCryptoProperties` | Jasypt 与自动装配 |
+
+自动配置类 `PassGuardCryptoAutoConfiguration`、`PassGuardJacksonAutoConfiguration`、
+`PassGuardMyBatisAutoConfiguration`、`PassGuardHibernate5Configuration`、
+`PassGuardHibernate6AutoConfiguration`、`PassGuardR2dbcConfiguration` 和
+`PassGuardR2dbcAutoConfiguration` 通常不需要直接调用。所有模块都可由
+`passguard-bom` 管理版本。
+
+## 密码生成 API
+
+### `SecurePasswordGenerator`
+
+| 入口 | 行为 |
+|---|---|
+| `new SecurePasswordGenerator()` | 使用新的 `SecureRandom` |
+| `new SecurePasswordGenerator(SecureRandom)` | 注入调用方统一管理的密码学安全随机源 |
+| `generate()` | 使用长度 20、每类至少 1 个字符的默认配置 |
+| `generate(PasswordGenerationOptions)` | 使用自定义不可变配置 |
+
+`PasswordGenerationOptions.secureDefaults()` 返回默认值，`builder()` 返回
+`PasswordGenerationOptions.Builder`。Builder 提供：
+
+- `length`、`minimumLowercase`、`minimumUppercase`、`minimumDigits`、
+  `minimumSymbols`；
+- `lowercaseAlphabet`、`uppercaseAlphabet`、`digitAlphabet`、`symbolAlphabet`；
+- `excludeAmbiguous` 和最终的 `build`。
+
+对应只读访问器为 `length()`、`minimumLowercase()`、`minimumUppercase()`、
+`minimumDigits()`、`minimumSymbols()`、`lowercaseAlphabet()`、
+`uppercaseAlphabet()`、`digitAlphabet()`、`symbolAlphabet()` 和
+`excludeAmbiguous()`。默认字符表常量为 `DEFAULT_LOWERCASE`、
+`DEFAULT_UPPERCASE`、`DEFAULT_DIGITS`、`DEFAULT_SYMBOLS`。
+
+```java
+import dev.flyfish.passguard.generator.PasswordGenerationOptions;
+import dev.flyfish.passguard.generator.SecurePasswordGenerator;
+
+PasswordGenerationOptions options = PasswordGenerationOptions.builder()
+    .length(24)
+    .minimumSymbols(2)
+    .excludeAmbiguous(true)
+    .build();
+
+String password = new SecurePasswordGenerator().generate(options);
+```
+
+生成器使用 Fisher-Yates 洗牌和无偏 `nextInt(bound)`。长度小于 4、负数最小值、
+总最小数量超过长度或过滤后字符表为空时抛出 `IllegalArgumentException`。
+
+## 登录密码哈希 API
+
+### `PasswordHasher`
+
+```java
+interface PasswordHasher {
+    String hash(char[] password);
+    boolean verify(char[] password, String encodedHash);
+    boolean needsRehash(String encodedHash);
+}
+```
+
+- `Argon2idPasswordHasher` 默认参数：
+  `DEFAULT_MEMORY_KIB=19456`、`DEFAULT_ITERATIONS=2`、
+  `DEFAULT_PARALLELISM=1`，输出标准 PHC 字符串。
+- `Pbkdf2PasswordHasher` 默认 `DEFAULT_ITERATIONS=600000`，
+  使用 PBKDF2-HMAC-SHA256 和 256 位输出。
+- `PasswordHashers.argon2id()`、`PasswordHashers.pbkdf2()` 是推荐工厂。
+
+自定义构造器接受安全参数和 `SecureRandom`。`verify` 对无效格式返回 `false`；
+`needsRehash` 对无效格式或旧参数返回 `true`。调用方必须在使用后清空原始
+`char[]`。快速 SHA-256、SHA-1、MD5 不属于此 API。
+
+## 加密与密钥 API
+
+### `CipherService` 与 `AesGcmCipherService`
+
+```java
+import dev.flyfish.passguard.crypto.AesGcmCipherService;
+import dev.flyfish.passguard.crypto.CipherService;
+import dev.flyfish.passguard.crypto.key.EnvironmentKeyProvider;
+
+CipherService cipher = new AesGcmCipherService(new EnvironmentKeyProvider());
+String encrypted = cipher.encrypt(plaintext, "data", "credential.password");
+String decrypted = cipher.decrypt(encrypted, "data", "credential.password");
+```
+
+密文格式为 `PG1.keyId.nonce.ciphertextAndTag`。每次加密使用新的 96 位 nonce、
+128 位认证标签和 `passguard:v1:<alias>:<context>` AAD。格式错误、未知 key id、错误
+上下文或篡改会抛出 `CryptoException`，不会返回原值。
+`AesGcmCipherService.PREFIX` 是公开的 `PG1.` 检测常量。
+
+### 密钥接口
+
+| 类型 | API |
+|---|---|
+| `KeyProvider` | `activeKey(alias)`、`key(alias, keyId)` |
+| `MutableKeyProvider` | `putAndActivate`、`activate`、`deactivate` |
+| `KeyDescriptor` | `id()`、`secretKey()`；`toString()` 永远脱敏 |
+| `KeyManager` | `generateAndActivate`、`activate`、`deactivate` |
+| `EnvironmentKeyProvider` | 默认读取 `PASSGUARD_KEY_*` |
+| `KeyStoreKeyProvider` | PKCS12/JCEKS 的 `alias.keyId` 条目 |
+| `CompositeKeyProvider` | 依次查询多个 Provider |
+| `InMemoryKeyProvider` | 测试、CLI 或外部 KMS 适配缓存 |
+
+`KeyDescriptor` 只接受 256 位材料和安全 key id。`deactivate(alias)` 只停止该
+别名的新加密，不删除历史材料，已有密文仍可解密。`KeyManager` 不提供无保护删除。
+
+### 盲索引与迁移
+
+`BlindIndexService.compute(plaintext, keyAlias, context)` 返回
+`BI1.keyId.digest`。它只做大小写敏感的原文等值匹配，不 trim、不规范化、不支持
+LIKE、范围或排序。
+
+`SecretMigrationService<T>` 使用 `Detector<T>` 与 `Writer<T>` 编排迁移，
+`migrate(records, dryRun)` 返回 `MigrationReport`；报告访问器为 `examined()`、
+`changed()`、`dryRun()`。默认 `ReadPolicy.STRICT` 拒绝旧明文；
+`ReadPolicy.MIGRATION` 仅用于有时间边界的迁移窗口。
+
+`ReEncryptionService` 用于密钥轮换：
+
+| API | 行为 |
+|---|---|
+| `needsReEncryption(ciphertext, keyAlias)` | 判断密文是否仍使用非 active key |
+| `reEncrypt(ciphertext, keyAlias, context)` | 先认证解密，再按 active key 重加密；已最新时返回原字符串 |
+| `migrate(records, CiphertextAccessor, keyAlias, context, dryRun)` | 对调用方提供的分页批次执行幂等迁移 |
+
+`ReEncryptionService.CiphertextAccessor<T>` 只定义 `read` 和 `write`，让应用自行控制
+事务、分页和持久化。轮换服务不会停用或删除旧密钥。
+
+`AnnotatedFieldProcessor` 是适配器共用底层，公开 `supports`、
+`encryptForWrite`、`restoreAfterWrite`、`decryptAfterRead`、
+`encryptStateForWrite`、`encryptedState`、`decryptStateAfterRead` 和
+`prepareForWrite`。`prepareForWrite` 返回 `PreparedWrite`，应在
+try-with-resources 中使用；其 `close` 会精确恢复原明文和调用方原有盲索引值，
+重复关闭无副作用，`toString()` 永不包含字段值。普通业务代码通常无需直接使用。
+
+## 注解与数据库适配
+
+```java
+import dev.flyfish.passguard.crypto.annotation.BlindIndex;
+import dev.flyfish.passguard.crypto.annotation.Encrypted;
+
+class Credential {
+    @Encrypted(keyAlias = "data", context = "credential.password")
+    private String password;
+
+    @BlindIndex(
+        source = "password",
+        keyAlias = "index",
+        context = "credential.password_index"
+    )
+    private String passwordIndex;
+}
+```
+
+- `@Encrypted.keyAlias()` 为空时使用 Starter 的默认别名；
+  `context()` 为空时由实体类和属性名推导。
+- `@BlindIndex.source()` 指定当前对象中的明文字段；`keyAlias()` 默认 `index`。
+- 两个注解只支持 `String` 字段，不匹配的类型在元数据初始化时失败。
+- `PassGuardMyBatisPlugin` 实现 `intercept`、`plugin`、`setProperties`；
+  Spring Boot 自动配置会创建插件。
+- `PassGuardHibernate5Integrator` / `PassGuardHibernate6Integrator` 注册
+  `onPreLoad`、`onPreInsert`、`onPreUpdate` 事件处理，只转换 Hibernate JDBC
+  state，不污染实体或脏检查快照。`integrate`/`disintegrate` 由 Hibernate 调用。
+- `PassGuardR2dbcCallbacks` 的 `onBeforeSave` 转换 `OutboundRow`，
+  `onAfterConvert` 解密实体。
+- `PassGuardJacksonModule.setupModule` 注册
+  `EncryptedAnnotationIntrospector.findPropertyAccess`，使属性 write-only。
+
+## Spring Boot / Jasypt API
+
+`PassGuardCryptoProperties` 对应 `passguard.crypto`：
+
+| 配置 | 默认值 | 说明 |
+|---|---|---|
+| `enabled` | `true` | 是否启用自动配置 |
+| `default-key-alias` | `data` | 数据库字段默认别名 |
+| `config-key-alias` | `config` | `ENC(...)` 配置别名 |
+| `read-policy` | `STRICT` | 旧明文读取策略 |
+| `provider` | `ENVIRONMENT` | `ENVIRONMENT` 或 `KEYSTORE` |
+| `environment-prefix` | `PASSGUARD_KEY_` | 环境变量前缀 |
+| `key-store.location` | 无 | PKCS12/JCEKS 路径 |
+| `key-store.type` | `PKCS12` | KeyStore 类型 |
+| `key-store.password-environment` | `PASSGUARD_KEYSTORE_PASSWORD` | 密码环境变量名 |
+| `key-store.password-system-property` | 无 | 可选的 KeyStore 密码 JVM 系统属性名 |
+| `key-store.active-ids` | `{}` | 别名到 active id 的映射 |
+
+对应访问器为 `getDefaultKeyAlias`/`setDefaultKeyAlias`、
+`getConfigKeyAlias`/`setConfigKeyAlias`、`getReadPolicy`/`setReadPolicy`、
+`getProvider`/`setProvider`、`getEnvironmentPrefix`/`setEnvironmentPrefix`、
+`getKeyStore`，以及嵌套 KeyStore 的 `getLocation`/`setLocation`、
+`getType`/`setType`、`getPasswordEnvironment`/`setPasswordEnvironment`、
+`getPasswordSystemProperty`/`setPasswordSystemProperty` 和
+`getActiveIds`/`setActiveIds`。
+
+`PassGuardStringEncryptor.encrypt`/`decrypt` 由 Starter 注册为
+`jasyptStringEncryptor`。`ConfigCryptoCli` 只从 stdin 读取明文并向 stdout 输出
+`ENC(PG1...)`，避免命令行历史泄漏。完整接入见
+[Spring Boot 示例](SPRING_BOOT_EXAMPLE.md)。
+
+自动配置公开的 Bean 工厂方法为 `passGuardKeyProvider`、
+`passGuardCipherService`、`passGuardBlindIndexService`、
+`passGuardAnnotatedFieldProcessor`、`passGuardJacksonModule`、
+`passGuardMyBatisPlugin`、`passGuardR2dbcCallbacks`、
+`passGuardHibernate5Customizer`、`passGuardHibernate6Customizer` 和
+`jasyptStringEncryptor`。Hibernate 定制器通过 `getIntegrators` 提供事件集成器，
+`customize` 不会把密钥材料写入 Hibernate 属性。一般应用只覆盖相同类型的 Bean，无需直接调用
+这些工厂方法。
+
+若 classpath 存在 Actuator，`PassGuardActuatorSanitizationConfiguration` 自动注册
+`passGuardSanitizingFunction`：敏感键名以及 `PG1`、`BI1`、`ENC(PG1...)` 值统一
+显示为脱敏占位符，避免 `/env`、配置属性端点或诊断输出泄漏秘密。
 
 ## 如何选择 API
 
@@ -26,7 +253,7 @@
 <dependency>
   <groupId>dev.flyfish</groupId>
   <artifactId>passguard</artifactId>
-  <version>2.0.0</version>
+  <version>2.1.0</version>
 </dependency>
 ```
 
@@ -351,4 +578,4 @@ PasswordAssessment result =
 
 ## `Example`
 
-`dev.flyfish.passguard.Example` 是固定演示值的独立启动示例，用于发行验证；业务集成不应依赖该类。
+`Example` 是固定演示值的独立启动示例，用于发行验证；业务集成不应依赖该类。

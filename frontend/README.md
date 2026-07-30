@@ -1,6 +1,6 @@
 # passguard-kit
 
-PassGuard 的 TypeScript/JavaScript 包，面向现代浏览器与 Node.js 20+。内置 25,000 条高频弱密码名单、zxcvbn-ts 强度估算、上下文变体和 HIBP k-anonymity 查询。
+PassGuard 的 TypeScript/JavaScript 包，面向现代浏览器与 Node.js 20+。提供 Web Crypto 安全密码生成器，并内置 25,000 条高频弱密码名单、zxcvbn-ts 强度估算、上下文变体和 HIBP k-anonymity 查询。
 
 - [完整 JavaScript / TypeScript API 参考](API.md)
 - npm 包包含 TypeScript 声明，IDE 可直接显示参数和 TSDoc
@@ -9,6 +9,17 @@ PassGuard 的 TypeScript/JavaScript 包，面向现代浏览器与 Node.js 20+�
 
 ```bash
 npm install passguard-kit
+```
+
+只需要密码生成器：
+
+```ts
+import { generatePassword } from 'passguard-kit/generator'
+
+const generated = generatePassword({
+  length: 24,
+  excludeAmbiguous: true,
+})
 ```
 
 ```ts

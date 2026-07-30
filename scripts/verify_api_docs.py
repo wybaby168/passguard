@@ -8,14 +8,13 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-JAVA_SOURCE = ROOT / "java/src/main/java/dev/flyfish/passguard"
 JAVA_DOC = ROOT / "java/API.md"
 TS_SOURCE = ROOT / "frontend/src"
 TS_DOC = ROOT / "frontend/API.md"
 
 JAVA_TYPE = re.compile(
     r"\bpublic\s+(?:static\s+)?(?:final\s+)?"
-    r"(?:class|interface|enum)\s+([A-Za-z_][A-Za-z0-9_]*)"
+    r"(?:class|interface|enum|@interface)\s+([A-Za-z_][A-Za-z0-9_]*)"
 )
 JAVA_METHOD = re.compile(
     r"^\s*public\s+(?:static\s+)?(?:final\s+)?"
@@ -44,7 +43,12 @@ def documented(symbol: str, text: str) -> bool:
 
 def java_symbols() -> set[str]:
     symbols: set[str] = set()
-    for source in sorted(JAVA_SOURCE.glob("*.java")):
+    sources = ROOT.glob(
+        "java/**/src/main/java/dev/flyfish/passguard/**/*.java"
+    )
+    for source in sorted(
+        path for path in sources if "passguard-benchmarks" not in path.parts
+    ):
         text = source.read_text(encoding="utf-8")
         symbols.update(JAVA_TYPE.findall(text))
         symbols.update(
