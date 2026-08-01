@@ -61,7 +61,7 @@
     <spring-data-r2dbc2.version>1.5.12</spring-data-r2dbc2.version>
     <spring-data-r2dbc3.version>3.2.12</spring-data-r2dbc3.version>
     <r2dbc-spi2.version>0.9.1.RELEASE</r2dbc-spi2.version>
-    <jasypt-spring-boot.version>3.0.5</jasypt-spring-boot.version>
+    <jasypt-spring-boot.version>4.0.4</jasypt-spring-boot.version>
     <hibernate5.version>5.6.15.Final</hibernate5.version>
     <hibernate6.version>6.4.10.Final</hibernate6.version>
     <jmh.version>1.37</jmh.version>
