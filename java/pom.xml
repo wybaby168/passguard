@@ -53,8 +53,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.outputTimestamp>2026-07-30T00:00:00Z</project.build.outputTimestamp>
     <junit.version>5.14.4</junit.version>
-    <bouncycastle.version>1.78.1</bouncycastle.version>
-    <jackson.version>2.17.2</jackson.version>
+    <bouncycastle.version>1.85</bouncycastle.version>
+    <jackson.version>2.22.1</jackson.version>
     <mybatis.version>3.5.19</mybatis.version>
     <spring-boot2.version>2.7.18</spring-boot2.version>
     <spring-boot3.version>3.2.12</spring-boot3.version>
@@ -65,8 +65,8 @@
     <hibernate5.version>5.6.15.Final</hibernate5.version>
     <hibernate6.version>6.4.10.Final</hibernate6.version>
     <jmh.version>1.37</jmh.version>
-    <testcontainers.version>1.20.6</testcontainers.version>
-    <postgresql-jdbc.version>42.7.5</postgresql-jdbc.version>
+    <testcontainers.version>1.21.4</testcontainers.version>
+    <postgresql-jdbc.version>42.7.13</postgresql-jdbc.version>
     <r2dbc-postgresql2.version>0.9.3.RELEASE</r2dbc-postgresql2.version>
     <r2dbc-postgresql3.version>1.0.7.RELEASE</r2dbc-postgresql3.version>
   </properties>
@@ -176,7 +176,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.6.2</version>
+        <version>3.6.3</version>
         <executions>
           <execution>
             <id>dependency-convergence</id>
