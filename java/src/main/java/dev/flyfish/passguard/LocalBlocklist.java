@@ -14,7 +14,11 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * UTF-8 弱密码整串名单。词条会执行 NFC 规范化并去重。
+ * UTF-8 弱密码整串名单。
+ *
+ * <p>名单匹配使用 NFKC 兼容规范化和不区分大小写的比较键，避免通过全角字符、
+ * 兼容字符或简单大小写变化绕过弱密码检查。该规范化仅用于名单比较，不会改变
+ * 后续哈希或认证所使用的真实密码。</p>
  */
 public final class LocalBlocklist {
     private final Set<String> entries;
@@ -29,7 +33,7 @@ public final class LocalBlocklist {
         Set<String> normalized = new HashSet<>(Math.max(16, entries.size() * 2));
         for (String entry : entries) {
             if (entry != null && !entry.isEmpty()) {
-                normalized.add(PasswordNormalizer.normalizePassword(entry));
+                normalized.add(PasswordNormalizer.blocklistKey(entry));
             }
         }
         this.entries = Collections.unmodifiableSet(
@@ -77,7 +81,7 @@ public final class LocalBlocklist {
             String line;
             while ((line = reader.readLine()) != null) {
                 // readLine removes line terminators only; it does not trim password spaces.
-                if (!line.isEmpty()) values.add(PasswordNormalizer.normalizePassword(line));
+                if (!line.isEmpty()) values.add(line);
             }
         }
         return new LocalBlocklist(values);
@@ -85,10 +89,10 @@ public final class LocalBlocklist {
 
     /**
      * @param password 待查询密码
-     * @return NFC 后的整串值是否命中
+     * @return NFKC 且不区分大小写的整串比较值是否命中
      */
     public boolean contains(String password) {
-        return entries.contains(PasswordNormalizer.normalizePassword(password));
+        return entries.contains(PasswordNormalizer.blocklistKey(password));
     }
 
     /** @return 去重后的词条数 */

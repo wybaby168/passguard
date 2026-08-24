@@ -4,7 +4,7 @@
   <parent>
     <groupId>dev.flyfish</groupId>
     <artifactId>passguard-parent</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1-SNAPSHOT</version>
   </parent>
   <artifactId>passguard-crypto-r2dbc-boot3</artifactId>
   <name>PassGuard R2DBC Boot 3 Adapter</name>
