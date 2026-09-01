@@ -63,7 +63,7 @@
     <r2dbc-spi2.version>0.9.1.RELEASE</r2dbc-spi2.version>
     <jasypt-spring-boot.version>3.0.5</jasypt-spring-boot.version>
     <hibernate5.version>5.6.15.Final</hibernate5.version>
-    <hibernate6.version>6.4.10.Final</hibernate6.version>
+    <hibernate6.version>7.4.6.Final</hibernate6.version>
     <jmh.version>1.37</jmh.version>
     <testcontainers.version>1.21.4</testcontainers.version>
     <postgresql-jdbc.version>42.7.13</postgresql-jdbc.version>
