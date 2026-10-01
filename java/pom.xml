@@ -53,8 +53,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.outputTimestamp>2026-07-30T00:00:00Z</project.build.outputTimestamp>
     <junit.version>5.14.4</junit.version>
-    <bouncycastle.version>1.85</bouncycastle.version>
-    <jackson.version>2.22.1</jackson.version>
+    <bouncycastle.version>1.86</bouncycastle.version>
+    <jackson.version>2.22.3</jackson.version>
     <mybatis.version>3.5.19</mybatis.version>
     <spring-boot2.version>2.7.18</spring-boot2.version>
     <spring-boot3.version>3.2.12</spring-boot3.version>
@@ -147,12 +147,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.15.0</version>
+          <version>3.16.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.6</version>
+          <version>3.6.0</version>
           <configuration>
             <useModulePath>false</useModulePath>
           </configuration>
